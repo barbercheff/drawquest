@@ -22,6 +22,44 @@ public class Quest {
     @OneToMany(mappedBy = "quest")
     private List<Progress> progress;
 
-    // Getters y Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public int getDifficulty() {
+        return difficulty;
+    }
+
+    public void setDifficulty(int difficulty) {
+        this.difficulty = difficulty;
+    }
+
+    public List<Progress> getProgress() {
+        return progress;
+    }
+
+    public void setProgress(List<Progress> progress) {
+        this.progress = progress;
+    }
 }
 
