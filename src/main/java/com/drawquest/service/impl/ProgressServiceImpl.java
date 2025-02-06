@@ -1,5 +1,6 @@
 package com.drawquest.service.impl;
 
+import com.drawquest.exception.ResourceNotFoundException;
 import com.drawquest.model.Progress;
 import com.drawquest.repository.ProgressRepository;
 import com.drawquest.service.ProgressService;
@@ -14,12 +15,13 @@ public class ProgressServiceImpl implements ProgressService {
     private ProgressRepository progressRepository;
 
     @Override
-    public Progress findProgressById(Long id) {
-        return progressRepository.findById(id).orElseThrow(() -> new RuntimeException("Progress not found"));
+    public Progress getProgressById(Long id) {
+        return progressRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Progress with ID " + id + " not found"));
     }
 
     @Override
-    public Progress saveProgress(Progress progress) {
+    public Progress createProgress(Progress progress) {
         return progressRepository.save(progress);
     }
 

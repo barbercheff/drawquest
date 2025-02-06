@@ -1,5 +1,6 @@
 package com.drawquest.service.impl;
 
+import com.drawquest.exception.ResourceNotFoundException;
 import com.drawquest.model.Drawing;
 import com.drawquest.repository.DrawingRepository;
 import com.drawquest.service.DrawingService;
@@ -14,12 +15,13 @@ public class DrawingServiceImpl implements DrawingService {
     private DrawingRepository drawingRepository;
 
     @Override
-    public Drawing findDrawingById(Long id) {
-        return drawingRepository.findById(id).orElseThrow(() -> new RuntimeException("Drawing not found"));
+    public Drawing getDrawingById(Long id) {
+        return drawingRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Drawing with ID " + id + " not found"));
     }
 
     @Override
-    public Drawing saveDrawing(Drawing drawing) {
+    public Drawing createDrawing(Drawing drawing) {
         return drawingRepository.save(drawing);
     }
 

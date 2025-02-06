@@ -5,7 +5,7 @@ import com.drawquest.model.Progress;
 import java.util.List;
 
 public interface ProgressService {
-    Progress findProgressById(Long id);
-    Progress saveProgress(Progress progress);
+    Progress getProgressById(Long id);
+    Progress createProgress(Progress progress);
     List<Progress> getAllProgress();
 }

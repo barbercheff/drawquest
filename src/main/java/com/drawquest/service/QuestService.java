@@ -5,7 +5,7 @@ import com.drawquest.model.Quest;
 import java.util.List;
 
 public interface QuestService {
-    Quest findQuestById(Long id);
-    Quest saveQuest(Quest quest);
+    Quest getQuestById(Long id);
+    Quest createQuest(Quest quest);
     List<Quest> getAllQuests();
 }
