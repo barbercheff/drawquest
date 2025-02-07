@@ -29,5 +29,24 @@ public class DrawingServiceImpl implements DrawingService {
     public List<Drawing> getAllDrawings() {
         return drawingRepository.findAll();
     }
+
+    @Override
+    public Drawing updateDrawing(Long id, Drawing drawing) {
+        Drawing existingDrawing = getDrawingById(id);
+
+        existingDrawing.setCreatedAt(drawing.getCreatedAt());
+        existingDrawing.setModifiedAt(drawing.getModifiedAt());
+        existingDrawing.setUser(drawing.getUser());
+        existingDrawing.setImageUrl(drawing.getImageUrl());
+        existingDrawing.setQuest(drawing.getQuest());
+
+        return drawingRepository.save(existingDrawing);
+    }
+
+    @Override
+    public void deleteDrawing(Long id) {
+        Drawing drawing = getDrawingById(id);
+        drawingRepository.delete(drawing);
+    }
 }
 
