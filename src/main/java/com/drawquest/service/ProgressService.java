@@ -8,4 +8,6 @@ public interface ProgressService {
     Progress getProgressById(Long id);
     Progress createProgress(Progress progress);
     List<Progress> getAllProgress();
+    Progress updateProgress(Long id, Progress progress);
+    void deleteProgress(Long id);
 }

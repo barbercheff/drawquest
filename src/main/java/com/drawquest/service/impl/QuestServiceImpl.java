@@ -30,5 +30,23 @@ public class QuestServiceImpl implements QuestService {
     public List<Quest> getAllQuests() {
         return questRepository.findAll();
     }
+
+    @Override
+    public Quest updateQuest(Long id, Quest quest) {
+        Quest existingQuest = getQuestById(id);
+
+        existingQuest.setDescription(quest.getDescription());
+        existingQuest.setDifficulty(quest.getDifficulty());
+        existingQuest.setProgress(quest.getProgress());
+        existingQuest.setTitle(quest.getTitle());
+
+        return questRepository.save(existingQuest);
+    }
+
+    @Override
+    public void deleteQuest(Long id) {
+        Quest quest = getQuestById(id);
+        questRepository.delete(quest);
+    }
 }
 

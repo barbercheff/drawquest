@@ -29,5 +29,23 @@ public class ProgressServiceImpl implements ProgressService {
     public List<Progress> getAllProgress() {
         return progressRepository.findAll();
     }
+
+    @Override
+    public Progress updateProgress(Long id, Progress progress) {
+        Progress existingProgress = getProgressById(id);
+
+        existingProgress.setAttempts(progress.getAttempts());
+        existingProgress.setCompleted(progress.isCompleted());
+        existingProgress.setUser(progress.getUser());
+        existingProgress.setQuest(progress.getQuest());
+
+        return progressRepository.save(existingProgress);
+    }
+
+    @Override
+    public void deleteProgress(Long id) {
+        Progress progress = getProgressById(id);
+        progressRepository.delete(progress);
+    }
 }
 
