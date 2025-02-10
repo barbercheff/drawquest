@@ -24,6 +24,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User with user name " + username + " not found"));
+    }
+
+    @Override
     public User createUser(User user) {
         return userRepository.save(user);
     }

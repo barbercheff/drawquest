@@ -1,6 +1,9 @@
 package com.drawquest.config;
 
 import com.drawquest.security.JwtAuthenticationFilter;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import io.swagger.v3.oas.annotations.security.SecuritySchemes;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,6 +21,18 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
+    @Configuration
+    @SecuritySchemes({
+            @SecurityScheme(
+                    name = "BearerAuth",
+                    type = SecuritySchemeType.HTTP,
+                    scheme = "bearer",
+                    bearerFormat = "JWT"
+            )
+    })
+    public static class SwaggerSecurityConfig {
+    }
+
     @Bean
     public JwtAuthenticationFilter authenticationJwtTokenFilter() {
         return new JwtAuthenticationFilter();
@@ -28,7 +43,8 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/auth/**",
+                                "/auth/register",
+                                "/auth/login",
                                 "/swagger-ui/**",
                                 "/v3/api-docs",
                                 "/v3/api-docs/**",
@@ -36,7 +52,7 @@ public class SecurityConfig {
                                 "/swagger-ui/index.html",
                                 "/api-docs/**",
                                 "/api-docs",
-                                "/api-docs.yaml").permitAll() // Permite el acceso al login y registro
+                                "/api-docs.yaml").permitAll() // Permite el acceso
                         .anyRequest().authenticated() // Las demás rutas requieren autenticación
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

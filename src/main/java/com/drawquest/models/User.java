@@ -1,6 +1,9 @@
 package com.drawquest.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
 import java.util.HashSet;
 import java.util.List;
@@ -12,15 +15,20 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore // Oculta el ID en Swagger y en cualquier respuesta JSON
     private Long id;
 
     @Column(nullable = false, unique = true)
+    @NotBlank(message = "El nombre de usuario es obligatorio")
     private String username;
 
     @Column(nullable = false)
+    @NotBlank(message = "La contraseña es obligatoria")
     private String password;
 
     @Column(nullable = false, unique = true)
+    @NotBlank(message = "El email es obligatorio")
+    @Email(message = "El email debe ser válido")
     private String email;
 
     private int level;  // Nivel del usuario en la progresión del juego
