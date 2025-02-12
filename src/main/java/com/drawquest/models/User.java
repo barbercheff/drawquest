@@ -3,7 +3,9 @@ package com.drawquest.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 import java.util.HashSet;
 import java.util.List;
@@ -24,6 +26,7 @@ public class User {
 
     @Column(nullable = false)
     @NotBlank(message = "La contraseña es obligatoria")
+    @Size(min = 6, message = "La contraseña debe tener al menos 6 caracteres")
     private String password;
 
     @Column(nullable = false, unique = true)
@@ -31,6 +34,7 @@ public class User {
     @Email(message = "El email debe ser válido")
     private String email;
 
+    @Min(value = 0, message = "El nivel no puede ser negativo")
     private int level;  // Nivel del usuario en la progresión del juego
 
     @OneToMany(mappedBy = "user")
