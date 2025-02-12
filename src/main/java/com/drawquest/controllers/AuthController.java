@@ -68,6 +68,6 @@ public class AuthController {
             return ResponseEntity.ok(Map.of("token", token));
         }
 
-        return ResponseEntity.status(401).body(Map.of("error", "Invalid credentials"));
+        return ResponseEntity.status(401).body(Map.of("error", "Credenciales incorrectas"));
     }
 }

@@ -5,6 +5,7 @@ import com.drawquest.exceptions.ResourceNotFoundException;
 import com.drawquest.models.User;
 import com.drawquest.repositories.UserRepository;
 import com.drawquest.services.UserService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -65,6 +66,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
+    @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("User with name " + username + " not found"));
