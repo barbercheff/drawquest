@@ -1,5 +1,6 @@
 package com.drawquest.controllers;
 
+import com.drawquest.dto.UserUpdateDTO;
 import com.drawquest.models.User;
 import com.drawquest.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -62,20 +63,27 @@ public class UserController {
     }
 
     @Operation(summary = "Actualiza un usuario existente", description = "Actualiza los datos de un usuario específico")
-    @ApiResponse(responseCode = "200", description = "Usuario actualizado con éxito", content = @Content)
+    @ApiResponse(responseCode = "200", description = "Usuario actualizado con éxito", content = @Content(schema = @Schema(implementation = User.class)))
     @ApiResponse(responseCode = "400", description = "Datos de entrada no válidos", content = @Content)
     @ApiResponse(responseCode = "404", description = "Usuario no encontrado", content = @Content)
     @PutMapping("/{id}")
     public ResponseEntity<?> updateUser(@PathVariable Long id,
-                                           @Valid @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Datos del usuario a crear",
-                                                   required = true, content = @Content(schema = @Schema(implementation = User.class)))
-                                           @org.springframework.web.bind.annotation.RequestBody User user, BindingResult result) {
+                                        @Valid @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                                                description = "Datos del usuario a actualizar",
+                                                required = true,
+                                                content = @Content(schema = @Schema(implementation = UserUpdateDTO.class))
+                                        )
+                                        @RequestBody UserUpdateDTO userUpdateDTO,
+                                        BindingResult result) {
+
         if (result.hasErrors()) {
             Map<String, String> errors = new HashMap<>();
             result.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
             return ResponseEntity.badRequest().body(errors);
         }
-        return ResponseEntity.ok(userService.updateUser(id, user));
+
+        User updatedUser = userService.updateUser(id, userUpdateDTO);
+        return ResponseEntity.ok(updatedUser);
     }
 
     @Operation(summary = "Elimina un usuario", description = "Elimina un usuario de la base de datos mediante su ID")

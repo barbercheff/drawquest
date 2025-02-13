@@ -1,5 +1,6 @@
 package com.drawquest.services;
 
+import com.drawquest.dto.UserUpdateDTO;
 import com.drawquest.models.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -11,7 +12,7 @@ public interface UserService {
     User getUserByUsername(String username);
     User createUser(User user);
     List<User> getAllUsers();
-    User updateUser(Long id, User user);
+    User updateUser(Long id, UserUpdateDTO userUpdateDTO);
     void deleteUser(Long id);
 }
 

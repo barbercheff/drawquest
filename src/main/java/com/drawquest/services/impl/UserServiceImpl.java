@@ -1,5 +1,6 @@
 package com.drawquest.services.impl;
 
+import com.drawquest.dto.UserUpdateDTO;
 import com.drawquest.exceptions.DuplicateResourceException;
 import com.drawquest.exceptions.ResourceNotFoundException;
 import com.drawquest.models.User;
@@ -47,14 +48,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public User updateUser(Long id, User user) {
+    public User updateUser(Long id, UserUpdateDTO userUpdateDTO) {
         User existingUser = getUserById(id);
 
-        existingUser.setUsername(user.getUsername());
-        existingUser.setEmail(user.getEmail());
-        existingUser.setLevel(user.getLevel());
-        existingUser.setPassword(user.getPassword());
-        existingUser.setProgress(user.getProgress());
+        existingUser.setLevel(userUpdateDTO.getLevel());
+        existingUser.setProgress(userUpdateDTO.getProgress());
+        existingUser.setRoles(userUpdateDTO.getRoles());
 
         return userRepository.save(existingUser);
     }
