@@ -1,5 +1,6 @@
 package com.drawquest.services.impl;
 
+import com.drawquest.dtos.DrawingUpdateDTO;
 import com.drawquest.exceptions.ResourceNotFoundException;
 import com.drawquest.models.Drawing;
 import com.drawquest.repositories.DrawingRepository;
@@ -31,14 +32,11 @@ public class DrawingServiceImpl implements DrawingService {
     }
 
     @Override
-    public Drawing updateDrawing(Long id, Drawing drawing) {
+    public Drawing updateDrawing(Long id, DrawingUpdateDTO drawing) {
         Drawing existingDrawing = getDrawingById(id);
 
-        existingDrawing.setCreatedAt(drawing.getCreatedAt());
         existingDrawing.setModifiedAt(drawing.getModifiedAt());
-        existingDrawing.setUser(drawing.getUser());
-        existingDrawing.setImageUrl(drawing.getImageUrl());
-        existingDrawing.setQuest(drawing.getQuest());
+        existingDrawing.setImageData(drawing.getImageData());
 
         return drawingRepository.save(existingDrawing);
     }

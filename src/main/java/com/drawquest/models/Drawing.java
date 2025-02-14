@@ -20,8 +20,9 @@ public class Drawing {
     @JoinColumn(name = "quest_id", nullable = false)
     private Quest quest;
 
-    @Column(nullable = false)
-    private String imageUrl; // URL donde se guarda el dibujo
+    @Lob
+    @Column(nullable = false, columnDefinition = "LONGBLOB") // Para MySQL, usa BYTEA en PostgreSQL
+    private byte[] imageData;
 
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -53,12 +54,12 @@ public class Drawing {
         this.quest = quest;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public byte[] getImageData() {
+        return imageData;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setImageData(byte[] imageData) {
+        this.imageData = imageData;
     }
 
     public LocalDateTime getCreatedAt() {

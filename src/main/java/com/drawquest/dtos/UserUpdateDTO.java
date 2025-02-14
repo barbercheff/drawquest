@@ -1,4 +1,4 @@
-package com.drawquest.dto;
+package com.drawquest.dtos;
 
 import com.drawquest.models.Progress;
 import com.drawquest.models.Role;

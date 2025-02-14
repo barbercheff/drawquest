@@ -1,6 +1,6 @@
 package com.drawquest.services;
 
-import com.drawquest.dto.UserUpdateDTO;
+import com.drawquest.dtos.UserUpdateDTO;
 import com.drawquest.models.User;
 import org.springframework.security.core.userdetails.UserDetails;
 

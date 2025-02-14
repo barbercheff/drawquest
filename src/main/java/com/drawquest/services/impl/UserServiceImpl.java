@@ -1,6 +1,6 @@
 package com.drawquest.services.impl;
 
-import com.drawquest.dto.UserUpdateDTO;
+import com.drawquest.dtos.UserUpdateDTO;
 import com.drawquest.exceptions.DuplicateResourceException;
 import com.drawquest.exceptions.ResourceNotFoundException;
 import com.drawquest.models.User;

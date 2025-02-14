@@ -1,6 +1,6 @@
 package com.drawquest.controllers;
 
-import com.drawquest.dto.UserUpdateDTO;
+import com.drawquest.dtos.UserUpdateDTO;
 import com.drawquest.models.User;
 import com.drawquest.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
