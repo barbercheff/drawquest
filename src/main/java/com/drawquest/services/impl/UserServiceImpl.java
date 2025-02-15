@@ -1,5 +1,6 @@
 package com.drawquest.services.impl;
 
+import com.drawquest.dtos.UserCreateDTO;
 import com.drawquest.dtos.UserUpdateDTO;
 import com.drawquest.exceptions.DuplicateResourceException;
 import com.drawquest.exceptions.ResourceNotFoundException;
@@ -34,9 +35,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public User createUser(User user) {
+    public User createUser(UserCreateDTO userCreateDTO) {
+        User newUser = new User();
+        newUser.setUsername(userCreateDTO.getUsername());
+        newUser.setEmail(userCreateDTO.getEmail());
+        newUser.setPassword(userCreateDTO.getPassword());
         try {
-            return userRepository.save(user);
+            return userRepository.save(newUser);
         } catch (DataIntegrityViolationException e) {
             throw new DuplicateResourceException("El nombre de usuario o el email ya están en uso.");
         }

@@ -1,5 +1,6 @@
 package com.drawquest.controllers;
 
+import com.drawquest.dtos.UserCreateDTO;
 import com.drawquest.dtos.UserUpdateDTO;
 import com.drawquest.models.User;
 import com.drawquest.services.UserService;
@@ -52,14 +53,14 @@ public class UserController {
     @PostMapping
     public ResponseEntity<?> createUser(
             @Valid @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Datos del usuario a crear",
-                    required = true, content = @Content(schema = @Schema(implementation = User.class)))
-            @org.springframework.web.bind.annotation.RequestBody User user, BindingResult result) {
+                    required = true, content = @Content(schema = @Schema(implementation = UserCreateDTO.class)))
+            @org.springframework.web.bind.annotation.RequestBody UserCreateDTO userCreateDTO, BindingResult result) {
         if (result.hasErrors()) {
             Map<String, String> errors = new HashMap<>();
             result.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
             return ResponseEntity.badRequest().body(errors);
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(user));
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(userCreateDTO));
     }
 
     @Operation(summary = "Actualiza un usuario existente", description = "Actualiza los datos de un usuario específico")

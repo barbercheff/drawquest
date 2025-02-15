@@ -1,5 +1,6 @@
 package com.drawquest.controllers;
 
+import com.drawquest.dtos.UserCreateDTO;
 import com.drawquest.dtos.UserUpdateDTO;
 import com.drawquest.models.User;
 import com.drawquest.services.UserService;
@@ -106,7 +107,7 @@ class UserControllerTest {
     @Test
     void testCreateUser() {
         // Usuario a crear (sin ID)
-        User newUser = new User();
+        UserCreateDTO newUser = new UserCreateDTO();
         newUser.setId(null);
         newUser.setUsername("newUser");
         newUser.setEmail("new@example.com");
@@ -124,7 +125,7 @@ class UserControllerTest {
         when(mockBindingResult.hasErrors()).thenReturn(false);  // Simulamos que no hay errores en la validación
 
         // Simulamos la llamada al servicio, que debería devolver el usuario guardado con un ID
-        when(userService.createUser(any(User.class))).thenReturn(savedUser);  // Simulamos que el servicio crea un usuario correctamente
+        when(userService.createUser(any(UserCreateDTO.class))).thenReturn(savedUser);  // Simulamos que el servicio crea un usuario correctamente
 
         // Llamamos al método del controlador, pasando el nuevo usuario y el resultado de validación simulado
         ResponseEntity<?> response = userController.createUser(newUser, mockBindingResult);  // Llamamos al controlador con los parámetros mockeados
@@ -139,7 +140,7 @@ class UserControllerTest {
         assertEquals(1L, createdUser.getId());  // Verificamos que el ID del usuario creado es el esperado (1L)
 
         // Verificamos que el servicio fue llamado una vez
-        verify(userService, times(1)).createUser(any(User.class));  // Verificamos que createUser fue llamado exactamente una vez con cualquier objeto de tipo User
+        verify(userService, times(1)).createUser(any(UserCreateDTO.class));  // Verificamos que createUser fue llamado exactamente una vez con cualquier objeto de tipo User
     }
 
     /**

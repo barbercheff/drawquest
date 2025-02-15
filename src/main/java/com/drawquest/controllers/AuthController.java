@@ -1,5 +1,6 @@
 package com.drawquest.controllers;
 
+import com.drawquest.dtos.UserCreateDTO;
 import com.drawquest.models.User;
 import com.drawquest.security.JwtUtil;
 import com.drawquest.services.UserService;
@@ -39,16 +40,16 @@ public class AuthController {
     @ApiResponse(responseCode = "400", description = "Datos inválidos o error en la solicitud")
     public ResponseEntity<?> register(
             @Valid @RequestBody(description = "Datos del usuario a registrar", required = true,
-                    content = @Content(schema = @Schema(implementation = User.class)))
-            @org.springframework.web.bind.annotation.RequestBody User user, BindingResult result) {
+                    content = @Content(schema = @Schema(implementation = UserCreateDTO.class)))
+            @org.springframework.web.bind.annotation.RequestBody UserCreateDTO userCreateDTO, BindingResult result) {
         if (result.hasErrors()) {
             Map<String, String> errors = new HashMap<>();
             result.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
             return ResponseEntity.badRequest().body(errors);
         }
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return ResponseEntity.ok(userService.createUser(user));
+        userCreateDTO.setPassword(passwordEncoder.encode(userCreateDTO.getPassword()));
+        return ResponseEntity.ok(userService.createUser(userCreateDTO));
     }
 
     @PostMapping("/login")
