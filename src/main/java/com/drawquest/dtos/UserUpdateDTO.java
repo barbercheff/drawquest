@@ -8,6 +8,7 @@ import java.util.Set;
 
 public class UserUpdateDTO {
     private int level;
+    private int xp;
     private List<Progress> progress;
     private Set<Role> roles;
 
@@ -33,6 +34,14 @@ public class UserUpdateDTO {
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+
+    public int getXp() {
+        return xp;
+    }
+
+    public void setXp(int xp) {
+        this.xp = xp;
     }
 }
 

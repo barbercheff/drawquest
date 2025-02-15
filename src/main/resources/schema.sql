@@ -4,7 +4,8 @@ CREATE TABLE IF NOT EXISTS users (
     username VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
-    level INT NOT NULL DEFAULT 0
+    level INT NOT NULL DEFAULT 0,
+    xp INT NOT NULL DEFAULT 0
 );
 
 -- Crear la tabla de roles (si no existe)
@@ -40,7 +41,8 @@ CREATE TABLE IF NOT EXISTS quests (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     description TEXT,
-    difficulty INT NOT NULL DEFAULT 1
+    difficulty INT NOT NULL DEFAULT 1,
+    xp_reward INT NOT NULL DEFAULT 25
 );
 
 -- Crear la tabla de progreso (si no existe)
@@ -59,6 +61,7 @@ CREATE TABLE IF NOT EXISTS drawings (
     user_id BIGINT NOT NULL,
     quest_id BIGINT NOT NULL,
     image_data LONGBLOB NOT NULL,
+    approved BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     modified_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,

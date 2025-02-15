@@ -19,8 +19,15 @@ public class Quest {
 
     private int difficulty; // 1 = fácil, 2 = medio, 3 = difícil
 
+    @Column(nullable = false)
+    private int xpReward; // Experiencia otorgada al completar la misión
+
+
     @OneToMany(mappedBy = "quest")
-    private List<Progress> progress;
+    private List<Progress> progress; // Relación con el progreso de los usuarios
+
+    @OneToMany(mappedBy = "quest")
+    private List<Drawing> drawings; // Dibujos subidos para esta quest
 
     public Long getId() {
         return id;
@@ -60,6 +67,22 @@ public class Quest {
 
     public void setProgress(List<Progress> progress) {
         this.progress = progress;
+    }
+
+    public int getXpReward() {
+        return xpReward;
+    }
+
+    public void setXpReward(int xpReward) {
+        this.xpReward = xpReward;
+    }
+
+    public List<Drawing> getDrawings() {
+        return drawings;
+    }
+
+    public void setDrawings(List<Drawing> drawings) {
+        this.drawings = drawings;
     }
 }
 

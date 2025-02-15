@@ -52,6 +52,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         User existingUser = getUserById(id);
 
         existingUser.setLevel(userUpdateDTO.getLevel());
+        existingUser.setXp(userUpdateDTO.getXp());
         existingUser.setProgress(userUpdateDTO.getProgress());
         existingUser.setRoles(userUpdateDTO.getRoles());
 

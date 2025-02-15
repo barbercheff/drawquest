@@ -58,6 +58,10 @@ public class Drawing {
         return imageData;
     }
 
+    @Column(nullable = false)
+    private boolean approved; // Indica si la IA ha aprobado el dibujo
+
+
     public void setImageData(byte[] imageData) {
         this.imageData = imageData;
     }
@@ -76,6 +80,14 @@ public class Drawing {
 
     public void setModifiedAt(LocalDateTime modifiedAt) {
         this.modifiedAt = modifiedAt;
+    }
+
+    public boolean isApproved() {
+        return approved;
+    }
+
+    public void setApproved(boolean approved) {
+        this.approved = approved;
     }
 }
 

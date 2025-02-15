@@ -37,6 +37,7 @@ public class QuestServiceImpl implements QuestService {
 
         existingQuest.setDescription(quest.getDescription());
         existingQuest.setDifficulty(quest.getDifficulty());
+        existingQuest.setXpReward(quest.getXpReward());
         existingQuest.setProgress(quest.getProgress());
         existingQuest.setTitle(quest.getTitle());
 

@@ -37,8 +37,14 @@ public class User {
     @Min(value = 0, message = "El nivel no puede ser negativo")
     private int level;  // Nivel del usuario en la progresión del juego
 
+    @Min(value = 0, message = "El XP no puede ser negativo")
+    private int xp; // Experiencia acumulada
+
     @OneToMany(mappedBy = "user")
-    private List<Progress> progress;
+    private List<Progress> progress; // Relación con el progreso de quests
+
+    @OneToMany(mappedBy = "user")
+    private List<Drawing> drawings; // Dibujos del usuario
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles",
@@ -100,6 +106,22 @@ public class User {
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+
+    public int getXp() {
+        return xp;
+    }
+
+    public void setXp(int xp) {
+        this.xp = xp;
+    }
+
+    public List<Drawing> getDrawings() {
+        return drawings;
+    }
+
+    public void setDrawings(List<Drawing> drawings) {
+        this.drawings = drawings;
     }
 }
 
