@@ -1,5 +1,6 @@
 package com.drawquest.controllers;
 
+import com.drawquest.dtos.DrawingCreateDTO;
 import com.drawquest.dtos.DrawingUpdateDTO;
 import com.drawquest.models.Drawing;
 import com.drawquest.services.DrawingService;
@@ -51,14 +52,14 @@ public class DrawingController {
     @PostMapping
     public ResponseEntity<?> createDrawing(
             @Valid @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Datos del dibujo a crear",
-                    required = true, content = @Content(schema = @Schema(implementation = Drawing.class)))
-            @org.springframework.web.bind.annotation.RequestBody Drawing drawing, BindingResult result) {
+                    required = true, content = @Content(schema = @Schema(implementation = DrawingCreateDTO.class)))
+            @org.springframework.web.bind.annotation.RequestBody DrawingCreateDTO drawingCreateDTO, BindingResult result) {
         if (result.hasErrors()) {
             Map<String, String> errors = new HashMap<>();
             result.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
             return ResponseEntity.badRequest().body(errors);
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(drawingService.createDrawing(drawing));
+        return ResponseEntity.status(HttpStatus.CREATED).body(drawingService.createDrawing(drawingCreateDTO));
     }
 
     @Operation(summary = "Actualiza un dibujo existente", description = "Actualiza los datos de un dibujo específico")

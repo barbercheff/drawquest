@@ -1,9 +1,14 @@
 package com.drawquest.services.impl;
 
+import com.drawquest.dtos.DrawingCreateDTO;
 import com.drawquest.dtos.DrawingUpdateDTO;
 import com.drawquest.exceptions.ResourceNotFoundException;
 import com.drawquest.models.Drawing;
+import com.drawquest.models.Quest;
+import com.drawquest.models.User;
 import com.drawquest.repositories.DrawingRepository;
+import com.drawquest.repositories.QuestRepository;
+import com.drawquest.repositories.UserRepository;
 import com.drawquest.services.DrawingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +19,10 @@ import java.util.List;
 public class DrawingServiceImpl implements DrawingService {
     @Autowired
     private DrawingRepository drawingRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private QuestRepository questRepository;
 
     @Override
     public Drawing getDrawingById(Long id) {
@@ -22,8 +31,16 @@ public class DrawingServiceImpl implements DrawingService {
     }
 
     @Override
-    public Drawing createDrawing(Drawing drawing) {
-        return drawingRepository.save(drawing);
+    public Drawing createDrawing(DrawingCreateDTO drawingCreateDTO) {
+        Drawing newDrawing = new Drawing();
+        User user = userRepository.getReferenceById(drawingCreateDTO.getUserId());
+        Quest quest = questRepository.getReferenceById(drawingCreateDTO.getQuestId());
+
+        newDrawing.setUser(user);
+        newDrawing.setQuest(quest);
+        newDrawing.setImageData(drawingCreateDTO.getImageData());
+
+        return drawingRepository.save(newDrawing);
     }
 
     @Override
