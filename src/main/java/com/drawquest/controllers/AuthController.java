@@ -1,6 +1,7 @@
 package com.drawquest.controllers;
 
 import com.drawquest.dtos.UserCreateDTO;
+import com.drawquest.dtos.UserLoginDTO;
 import com.drawquest.models.User;
 import com.drawquest.security.JwtUtil;
 import com.drawquest.services.UserService;
@@ -59,13 +60,13 @@ public class AuthController {
     @ApiResponse(responseCode = "400", description = "Error en la solicitud")
     public ResponseEntity<Map<String, String>> login(
             @RequestBody(description = "Credenciales del usuario para iniciar sesión", required = true,
-                    content = @Content(schema = @Schema(implementation = User.class)))
-            @org.springframework.web.bind.annotation.RequestBody User user) {
+                    content = @Content(schema = @Schema(implementation = UserLoginDTO.class)))
+            @org.springframework.web.bind.annotation.RequestBody UserLoginDTO userLoginDTO) {
 
-        User existingUser = userService.getUserByUsername(user.getUsername());
+        User existingUser = userService.getUserByUsername(userLoginDTO.getUsername());
 
-        if (existingUser != null && passwordEncoder.matches(user.getPassword(), existingUser.getPassword())) {
-            String token = jwtUtil.generateToken(user.getUsername());
+        if (existingUser != null && passwordEncoder.matches(userLoginDTO.getPassword(), existingUser.getPassword())) {
+            String token = jwtUtil.generateToken(userLoginDTO.getUsername());
             return ResponseEntity.ok(Map.of("token", token));
         }
 

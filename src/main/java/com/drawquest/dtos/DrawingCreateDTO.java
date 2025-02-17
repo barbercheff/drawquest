@@ -1,7 +1,7 @@
 package com.drawquest.dtos;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.web.multipart.MultipartFile;
 
 public class DrawingCreateDTO {
 
@@ -12,12 +12,12 @@ public class DrawingCreateDTO {
     private Long questId;
 
     @NotNull(message = "La imagen es obligatoria")
-    private byte[] imageData;
+    private MultipartFile imageData;
 
     public DrawingCreateDTO() {
     }
 
-    public DrawingCreateDTO(Long userId, Long questId, byte[] imageData) {
+    public DrawingCreateDTO(Long userId, Long questId, MultipartFile imageData) {
         this.userId = userId;
         this.questId = questId;
         this.imageData = imageData;
@@ -39,11 +39,11 @@ public class DrawingCreateDTO {
         this.questId = questId;
     }
 
-    public byte[] getImageData() {
+    public MultipartFile getImageData() {
         return imageData;
     }
 
-    public void setImageData(byte[] imageData) {
+    public void setImageData(MultipartFile imageData) {
         this.imageData = imageData;
     }
 }

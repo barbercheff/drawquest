@@ -49,7 +49,7 @@ public class DrawingController {
     @Operation(summary = "Crea un nuevo dibujo", description = "Crea un nuevo dibujo en la base de datos")
     @ApiResponse(responseCode = "201", description = "Dibujo creado con éxito", content = @Content)
     @ApiResponse(responseCode = "400", description = "Datos de entrada no válidos", content = @Content)
-    @PostMapping
+    @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<?> createDrawing(
             @Valid @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Datos del dibujo a crear",
                     required = true, content = @Content(schema = @Schema(implementation = DrawingCreateDTO.class)))

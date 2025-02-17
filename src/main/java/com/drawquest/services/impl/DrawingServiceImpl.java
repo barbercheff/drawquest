@@ -13,6 +13,7 @@ import com.drawquest.services.DrawingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -38,7 +39,11 @@ public class DrawingServiceImpl implements DrawingService {
 
         newDrawing.setUser(user);
         newDrawing.setQuest(quest);
-        newDrawing.setImageData(drawingCreateDTO.getImageData());
+        try {
+            newDrawing.setImageData(drawingCreateDTO.getImageData().getBytes());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         return drawingRepository.save(newDrawing);
     }
