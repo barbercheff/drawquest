@@ -1,6 +1,7 @@
 package com.drawquest.dtos;
 
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.springframework.web.multipart.MultipartFile;
 
 public class DrawingCreateDTO {
@@ -11,7 +12,7 @@ public class DrawingCreateDTO {
     @NotNull(message = "El id de la quest es obligatorio")
     private Long questId;
 
-    @NotNull(message = "La imagen es obligatoria")
+    @Size(min = 1, message = "Debe incluirse una imagen válida")
     private MultipartFile imageData;
 
     public DrawingCreateDTO() {

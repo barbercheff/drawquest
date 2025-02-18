@@ -82,12 +82,6 @@ public class Drawing {
         this.modifiedAt = modifiedAt;
     }
 
-    public boolean isApproved() {
-        return approved;
-    }
 
-    public void setApproved(boolean approved) {
-        this.approved = approved;
-    }
 }
 

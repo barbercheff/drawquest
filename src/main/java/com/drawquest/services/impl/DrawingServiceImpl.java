@@ -42,7 +42,7 @@ public class DrawingServiceImpl implements DrawingService {
         try {
             newDrawing.setImageData(drawingCreateDTO.getImageData().getBytes());
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error al procesar la imagen", e);
         }
 
         return drawingRepository.save(newDrawing);

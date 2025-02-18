@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
@@ -46,20 +47,29 @@ public class DrawingController {
         return ResponseEntity.ok(drawing);
     }
 
-    @Operation(summary = "Crea un nuevo dibujo", description = "Crea un nuevo dibujo en la base de datos")
-    @ApiResponse(responseCode = "201", description = "Dibujo creado con éxito", content = @Content)
-    @ApiResponse(responseCode = "400", description = "Datos de entrada no válidos", content = @Content)
     @PostMapping(consumes = "multipart/form-data")
+    @Operation(
+            summary = "Crea un nuevo dibujo",
+            description = "Permite a un usuario subir un dibujo para una quest",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Dibujo creado con éxito"),
+                    @ApiResponse(responseCode = "400", description = "Datos de entrada no válidos")
+            }
+    )
     public ResponseEntity<?> createDrawing(
-            @Valid @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Datos del dibujo a crear",
-                    required = true, content = @Content(schema = @Schema(implementation = DrawingCreateDTO.class)))
-            @org.springframework.web.bind.annotation.RequestBody DrawingCreateDTO drawingCreateDTO, BindingResult result) {
-        if (result.hasErrors()) {
-            Map<String, String> errors = new HashMap<>();
-            result.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
-            return ResponseEntity.badRequest().body(errors);
+            @RequestParam("userId") Long userId,
+            @RequestParam("questId") Long questId,
+            @RequestPart ("imageData") MultipartFile imageData) {
+
+        if (imageData.isEmpty()) {
+            return ResponseEntity.badRequest().body("Debe incluirse una imagen válida.");
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(drawingService.createDrawing(drawingCreateDTO));
+
+        DrawingCreateDTO drawingCreateDTO = new DrawingCreateDTO(userId, questId, imageData);
+
+        Drawing newDrawing = drawingService.createDrawing(drawingCreateDTO);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(newDrawing);
     }
 
     @Operation(summary = "Actualiza un dibujo existente", description = "Actualiza los datos de un dibujo específico")
