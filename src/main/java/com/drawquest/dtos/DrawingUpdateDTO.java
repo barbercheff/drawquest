@@ -6,16 +6,16 @@ import com.drawquest.models.Role;
 import java.time.LocalDateTime;
 
 public class DrawingUpdateDTO {
-    private byte[] imageData;
+    private String imageUrl;
     private LocalDateTime modifiedAt;
     private boolean approved;
 
-    public byte[] getImageData() {
-        return imageData;
+    public String getImageData() {
+        return imageUrl;
     }
 
-    public void setImageData(byte[] imageData) {
-        this.imageData = imageData;
+    public void setImageData(String imageData) {
+        this.imageUrl = imageUrl;
     }
 
     public LocalDateTime getModifiedAt() {

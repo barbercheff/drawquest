@@ -2,7 +2,9 @@ package com.drawquest.controllers;
 
 import com.drawquest.dtos.DrawingCreateDTO;
 import com.drawquest.dtos.DrawingUpdateDTO;
+import com.drawquest.dtos.UserCreateDTO;
 import com.drawquest.models.Drawing;
+import com.drawquest.models.Quest;
 import com.drawquest.services.DrawingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -56,16 +58,13 @@ public class DrawingController {
                     @ApiResponse(responseCode = "400", description = "Datos de entrada no válidos")
             }
     )
-    public ResponseEntity<?> createDrawing(
-            @RequestParam("userId") Long userId,
-            @RequestParam("questId") Long questId,
-            @RequestPart ("imageData") MultipartFile imageData) {
+    public ResponseEntity<?> createDrawing(@Valid @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Datos del dibujo a crear",
+            required = true, content = @Content(schema = @Schema(implementation = DrawingCreateDTO.class)))
+                                                           @org.springframework.web.bind.annotation.RequestBody DrawingCreateDTO drawingCreateDTO) {
 
-        if (imageData.isEmpty()) {
+        if (drawingCreateDTO.getImageUrl().isEmpty()) {
             return ResponseEntity.badRequest().body("Debe incluirse una imagen válida.");
         }
-
-        DrawingCreateDTO drawingCreateDTO = new DrawingCreateDTO(userId, questId, imageData);
 
         Drawing newDrawing = drawingService.createDrawing(drawingCreateDTO);
 

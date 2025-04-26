@@ -20,15 +20,17 @@ public class Drawing {
     @JoinColumn(name = "quest_id", nullable = false)
     private Quest quest;
 
-    @Lob
-    @Column(nullable = false, columnDefinition = "LONGBLOB") // Para MySQL, usa BYTEA en PostgreSQL
-    private byte[] imageData;
+    @Column(nullable = false)
+    private String imageUrl;
 
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(nullable = false)
     private LocalDateTime modifiedAt = LocalDateTime.now();
+
+    @Column(nullable = false)
+    private boolean approved; // Indica si la IA ha aprobado el dibujo
 
     public Long getId() {
         return id;
@@ -54,16 +56,12 @@ public class Drawing {
         this.quest = quest;
     }
 
-    public byte[] getImageData() {
-        return imageData;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    @Column(nullable = false)
-    private boolean approved; // Indica si la IA ha aprobado el dibujo
-
-
-    public void setImageData(byte[] imageData) {
-        this.imageData = imageData;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public LocalDateTime getCreatedAt() {

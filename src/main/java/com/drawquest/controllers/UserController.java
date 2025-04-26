@@ -54,7 +54,7 @@ public class UserController {
     public ResponseEntity<?> createUser(
             @Valid @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Datos del usuario a crear",
                     required = true, content = @Content(schema = @Schema(implementation = UserCreateDTO.class)))
-            @org.springframework.web.bind.annotation.RequestBody UserCreateDTO userCreateDTO, BindingResult result) {
+            @RequestBody UserCreateDTO userCreateDTO, BindingResult result) {
         if (result.hasErrors()) {
             Map<String, String> errors = new HashMap<>();
             result.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));

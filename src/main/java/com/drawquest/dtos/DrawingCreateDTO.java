@@ -2,6 +2,7 @@ package com.drawquest.dtos;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.hibernate.validator.constraints.URL;
 import org.springframework.web.multipart.MultipartFile;
 
 public class DrawingCreateDTO {
@@ -12,16 +13,17 @@ public class DrawingCreateDTO {
     @NotNull(message = "El id de la quest es obligatorio")
     private Long questId;
 
-    @Size(min = 1, message = "Debe incluirse una imagen válida")
-    private MultipartFile imageData;
+    @NotNull(message = "La URL de la imagen es obligatoria")
+    @URL(message = "Debe ser una URL válida")
+    private String imageUrl;
 
     public DrawingCreateDTO() {
     }
 
-    public DrawingCreateDTO(Long userId, Long questId, MultipartFile imageData) {
+    public DrawingCreateDTO(Long userId, Long questId, String imageUrl) {
         this.userId = userId;
         this.questId = questId;
-        this.imageData = imageData;
+        this.imageUrl = imageUrl;
     }
 
     public Long getUserId() {
@@ -40,11 +42,11 @@ public class DrawingCreateDTO {
         this.questId = questId;
     }
 
-    public MultipartFile getImageData() {
-        return imageData;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public void setImageData(MultipartFile imageData) {
-        this.imageData = imageData;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }
