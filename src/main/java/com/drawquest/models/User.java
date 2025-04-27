@@ -52,6 +52,23 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
+    public User() {
+
+    }
+
+    public User(Long id, String username, String password, String email, int level, int xp, List<Progress> progress,
+                List<Drawing> drawings, Set<Role> roles) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.level = level;
+        this.xp = xp;
+        this.progress = progress;
+        this.drawings = drawings;
+        this.roles = roles;
+    }
+
     public Long getId() {
         return id;
     }

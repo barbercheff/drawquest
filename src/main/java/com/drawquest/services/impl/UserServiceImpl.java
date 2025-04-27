@@ -1,9 +1,11 @@
 package com.drawquest.services.impl;
 
 import com.drawquest.dtos.UserCreateDTO;
+import com.drawquest.dtos.UserResponseDTO;
 import com.drawquest.dtos.UserUpdateDTO;
 import com.drawquest.exceptions.DuplicateResourceException;
 import com.drawquest.exceptions.ResourceNotFoundException;
+import com.drawquest.mappers.UserMapper;
 import com.drawquest.models.User;
 import com.drawquest.repositories.UserRepository;
 import com.drawquest.services.UserService;
@@ -16,6 +18,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService, UserDetailsService {
@@ -23,23 +26,23 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private UserRepository userRepository;
 
     @Override
-    public User getUserById(Long id) {
-        return userRepository.findById(id)
+    public UserResponseDTO getUserById(Long id) {
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User with ID " + id + " not found"));
+        return UserMapper.toUserResponseDTO(user);
     }
 
     @Override
-    public User getUserByUsername(String username) {
-        return userRepository.findByUsername(username)
+    public UserResponseDTO getUserByUsername(String username) {
+        User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("User with user name " + username + " not found"));
+        return UserMapper.toUserResponseDTO(user);
     }
 
     @Override
-    public User createUser(UserCreateDTO userCreateDTO) {
-        User newUser = new User();
-        newUser.setUsername(userCreateDTO.getUsername());
-        newUser.setEmail(userCreateDTO.getEmail());
-        newUser.setPassword(userCreateDTO.getPassword());
+    public UserResponseDTO createUser(UserCreateDTO userCreateDTO) {
+        User newUser = UserMapper.toUserEntity(userCreateDTO);
+
         try {
             return userRepository.save(newUser);
         } catch (DataIntegrityViolationException e) {
@@ -48,20 +51,27 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public List<UserResponseDTO> getAllUsers() {
+        List<User> users = userRepository.findAll();
+        return users.stream()
+                .map(UserMapper::toUserResponseDTO) // convertir cada entidad a DTO
+                .collect(Collectors.toList());
     }
 
     @Override
-    public User updateUser(Long id, UserUpdateDTO userUpdateDTO) {
-        User existingUser = getUserById(id);
+    public UserResponseDTO updateUser(Long id, UserUpdateDTO userUpdateDTO) {
+        User existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User with ID " + id + " not found"));
+
 
         existingUser.setLevel(userUpdateDTO.getLevel());
         existingUser.setXp(userUpdateDTO.getXp());
         existingUser.setProgress(userUpdateDTO.getProgress());
         existingUser.setRoles(userUpdateDTO.getRoles());
 
-        return userRepository.save(existingUser);
+        User updatedUser = userRepository.save(existingUser);
+
+        return UserMapper.toUserResponseDTO(updatedUser);
     }
 
     @Override

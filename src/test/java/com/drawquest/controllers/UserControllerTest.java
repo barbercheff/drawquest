@@ -1,6 +1,7 @@
 package com.drawquest.controllers;
 
 import com.drawquest.dtos.UserCreateDTO;
+import com.drawquest.dtos.UserResponseDTO;
 import com.drawquest.dtos.UserUpdateDTO;
 import com.drawquest.models.User;
 import com.drawquest.services.UserService;
@@ -67,7 +68,7 @@ class UserControllerTest {
         when(userService.getAllUsers()).thenReturn(mockUsers); // Simula la respuesta del servicio
 
         // Llama al método del controlador
-        ResponseEntity<List<User>> response = userController.getAllUsers();
+        ResponseEntity<List<UserResponseDTO>> response = userController.getAllUsers();
 
         // Verifica que la respuesta es correcta
         assertEquals(200, response.getStatusCodeValue()); // Debe devolver HTTP 200 OK
@@ -91,7 +92,7 @@ class UserControllerTest {
         when(userService.getUserById(1L)).thenReturn(mockUser); // Simula la respuesta del servicio
 
         // Llama al método del controlador
-        ResponseEntity<User> response = userController.getUserById(1L);
+        ResponseEntity<UserResponseDTO> response = userController.getUserById(1L);
 
         // Verifica que la respuesta es correcta
         assertEquals(200, response.getStatusCodeValue()); // HTTP 200 OK
@@ -128,7 +129,7 @@ class UserControllerTest {
         when(userService.createUser(any(UserCreateDTO.class))).thenReturn(savedUser);  // Simulamos que el servicio crea un usuario correctamente
 
         // Llamamos al método del controlador, pasando el nuevo usuario y el resultado de validación simulado
-        ResponseEntity<?> response = userController.createUser(newUser, mockBindingResult);  // Llamamos al controlador con los parámetros mockeados
+        ResponseEntity<?> response = userController.createUser(newUser);  // Llamamos al controlador con los parámetros mockeados
 
         // Verificamos que la respuesta es la esperada
         assertEquals(201, response.getStatusCodeValue());  // Verificamos que el código de estado es 201 (CREATED)
@@ -169,7 +170,7 @@ class UserControllerTest {
         when(userService.updateUser(eq(userId), any(UserUpdateDTO.class))).thenReturn(updatedUser); // Simula la respuesta del servicio
 
         // Llama al método del controlador
-        ResponseEntity<?> response = userController.updateUser(userId, updateDTO, mockBindingResult);
+        ResponseEntity<?> response = userController.updateUser(userId, updateDTO);
 
         // Verifica que la respuesta es correcta
         assertEquals(200, response.getStatusCodeValue()); // HTTP 200 OK

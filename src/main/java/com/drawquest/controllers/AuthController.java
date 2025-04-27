@@ -2,6 +2,7 @@ package com.drawquest.controllers;
 
 import com.drawquest.dtos.UserCreateDTO;
 import com.drawquest.dtos.UserLoginDTO;
+import com.drawquest.dtos.UserResponseDTO;
 import com.drawquest.models.User;
 import com.drawquest.security.JwtUtil;
 import com.drawquest.services.UserService;
@@ -39,15 +40,10 @@ public class AuthController {
     @Operation(summary = "Registrar usuario", description = "Crea un nuevo usuario en la aplicación")
     @ApiResponse(responseCode = "200", description = "Usuario registrado correctamente")
     @ApiResponse(responseCode = "400", description = "Datos inválidos o error en la solicitud")
-    public ResponseEntity<?> register(
+    public ResponseEntity<UserResponseDTO> register(
             @Valid @RequestBody(description = "Datos del usuario a registrar", required = true,
                     content = @Content(schema = @Schema(implementation = UserCreateDTO.class)))
-            @org.springframework.web.bind.annotation.RequestBody UserCreateDTO userCreateDTO, BindingResult result) {
-        if (result.hasErrors()) {
-            Map<String, String> errors = new HashMap<>();
-            result.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
-            return ResponseEntity.badRequest().body(errors);
-        }
+            @org.springframework.web.bind.annotation.RequestBody UserCreateDTO userCreateDTO) {
 
         userCreateDTO.setPassword(passwordEncoder.encode(userCreateDTO.getPassword()));
         return ResponseEntity.ok(userService.createUser(userCreateDTO));
@@ -63,7 +59,7 @@ public class AuthController {
                     content = @Content(schema = @Schema(implementation = UserLoginDTO.class)))
             @org.springframework.web.bind.annotation.RequestBody UserLoginDTO userLoginDTO) {
 
-        User existingUser = userService.getUserByUsername(userLoginDTO.getUsername());
+        UserResponseDTO existingUser = userService.getUserByUsername(userLoginDTO.getUsername());
 
         if (existingUser != null && passwordEncoder.matches(userLoginDTO.getPassword(), existingUser.getPassword())) {
             String token = jwtUtil.generateToken(userLoginDTO.getUsername());
