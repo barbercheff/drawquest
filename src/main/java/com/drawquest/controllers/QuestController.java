@@ -1,5 +1,6 @@
 package com.drawquest.controllers;
 
+import com.drawquest.dtos.UserResponseDTO;
 import com.drawquest.models.Quest;
 import com.drawquest.services.QuestService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,23 +18,23 @@ public class QuestController {
     private QuestService questService;
 
     @GetMapping
-    public ResponseEntity<List<Quest>> getAllQuests() {
+    public ResponseEntity<List<QuestResponseDTO>> getAllQuests() {
         return ResponseEntity.ok(questService.getAllQuests());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Quest> getQuestById(@PathVariable Long id) {
+    public ResponseEntity<QuestResponseDTO> getQuestById(@PathVariable Long id) {
         Quest quest = questService.getQuestById(id);
         return ResponseEntity.ok(quest);
     }
 
     @PostMapping
-    public ResponseEntity<Quest> createQuest(@RequestBody Quest quest) {
+    public ResponseEntity<QuestResponseDTO> createQuest(@RequestBody Quest quest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(questService.createQuest(quest));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Quest> updateQuest(@PathVariable Long id, @RequestBody Quest quest) {
+    public ResponseEntity<QuestResponseDTO> updateQuest(@PathVariable Long id, @RequestBody Quest quest) {
         return ResponseEntity.ok(questService.updateQuest(id, quest));
     }
 

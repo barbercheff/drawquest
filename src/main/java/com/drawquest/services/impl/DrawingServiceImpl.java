@@ -39,11 +39,7 @@ public class DrawingServiceImpl implements DrawingService {
 
         newDrawing.setUser(user);
         newDrawing.setQuest(quest);
-        try {
-            newDrawing.setImageData(drawingCreateDTO.getImageData().getBytes());
-        } catch (IOException e) {
-            throw new RuntimeException("Error al procesar la imagen", e);
-        }
+        newDrawing.setImageUrl(drawingCreateDTO.getImageUrl());
 
         return drawingRepository.save(newDrawing);
     }
@@ -58,7 +54,7 @@ public class DrawingServiceImpl implements DrawingService {
         Drawing existingDrawing = getDrawingById(id);
 
         existingDrawing.setModifiedAt(drawing.getModifiedAt());
-        existingDrawing.setImageData(drawing.getImageData());
+        existingDrawing.setImageUrl(drawing.getImageUrl());
 
         return drawingRepository.save(existingDrawing);
     }

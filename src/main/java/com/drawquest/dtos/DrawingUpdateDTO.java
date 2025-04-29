@@ -10,11 +10,11 @@ public class DrawingUpdateDTO {
     private LocalDateTime modifiedAt;
     private boolean approved;
 
-    public String getImageData() {
+    public String getImageUrl() {
         return imageUrl;
     }
 
-    public void setImageData(String imageData) {
+    public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
 

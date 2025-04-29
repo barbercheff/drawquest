@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         User newUser = UserMapper.toUserEntity(userCreateDTO);
 
         try {
-            return userRepository.save(newUser);
+            return UserMapper.toUserResponseDTO(userRepository.save(newUser));
         } catch (DataIntegrityViolationException e) {
             throw new DuplicateResourceException("El nombre de usuario o el email ya están en uso.");
         }
@@ -76,8 +76,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public void deleteUser(Long id) {
-        User user = getUserById(id);
-        userRepository.delete(user);
+        User existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User with ID " + id + " not found"));
+        userRepository.delete(existingUser);
     }
 
     @Override

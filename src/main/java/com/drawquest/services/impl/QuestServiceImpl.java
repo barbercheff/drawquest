@@ -1,5 +1,6 @@
 package com.drawquest.services.impl;
 
+import com.drawquest.dtos.QuestCreateDTO;
 import com.drawquest.exceptions.ResourceNotFoundException;
 import com.drawquest.models.Quest;
 import com.drawquest.repositories.QuestRepository;
@@ -16,23 +17,23 @@ public class QuestServiceImpl implements QuestService {
 
 
     @Override
-    public Quest getQuestById(Long id) {
+    public QuestResponseDTO getQuestById(Long id) {
         return questRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Quest with ID " + id + " not found"));
     }
 
     @Override
-    public Quest createQuest(Quest quest) {
+    public QuestResponseDTO createQuest(QuestCreateDTO questCreateDTO) {
         return questRepository.save(quest);
     }
 
     @Override
-    public List<Quest> getAllQuests() {
+    public List<QuestResponseDTO> getAllQuests() {
         return questRepository.findAll();
     }
 
     @Override
-    public Quest updateQuest(Long id, Quest quest) {
+    public Quest updateQuest(Long id, QuestCreateDTO questCreateDTO) {
         Quest existingQuest = getQuestById(id);
 
         existingQuest.setDescription(quest.getDescription());
