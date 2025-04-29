@@ -21,23 +21,16 @@ public class User {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    @NotBlank(message = "El nombre de usuario es obligatorio")
     private String username;
 
     @Column(nullable = false)
-    @NotBlank(message = "La contraseña es obligatoria")
-    @Size(min = 6, message = "La contraseña debe tener al menos 6 caracteres")
     private String password;
 
     @Column(nullable = false, unique = true)
-    @NotBlank(message = "El email es obligatorio")
-    @Email(message = "El email debe ser válido")
     private String email;
 
-    @Min(value = 0, message = "El nivel no puede ser negativo")
     private int level;  // Nivel del usuario en la progresión del juego
 
-    @Min(value = 0, message = "El XP no puede ser negativo")
     private int xp; // Experiencia acumulada
 
     @OneToMany(mappedBy = "user")
