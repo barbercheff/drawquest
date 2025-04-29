@@ -5,6 +5,7 @@ import com.drawquest.dtos.UserLoginDTO;
 import com.drawquest.dtos.UserResponseDTO;
 import com.drawquest.models.User;
 import com.drawquest.security.JwtUtil;
+import com.drawquest.services.AuthService;
 import com.drawquest.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -29,6 +30,9 @@ public class AuthController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private AuthService authService;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -59,13 +63,6 @@ public class AuthController {
                     content = @Content(schema = @Schema(implementation = UserLoginDTO.class)))
             @org.springframework.web.bind.annotation.RequestBody UserLoginDTO userLoginDTO) {
 
-        UserResponseDTO existingUser = userService.getUserByUsername(userLoginDTO.getUsername());
-
-        if (existingUser != null && passwordEncoder.matches(userLoginDTO.getPassword(), existingUser.getPassword())) {
-            String token = jwtUtil.generateToken(userLoginDTO.getUsername());
-            return ResponseEntity.ok(Map.of("token", token));
-        }
-
-        return ResponseEntity.status(401).body(Map.of("error", "Credenciales incorrectas"));
+            return ResponseEntity.ok(Map.of("token", authService.authenticate(userLoginDTO)));
     }
 }
