@@ -1,7 +1,10 @@
 package com.drawquest.services.impl;
 
 import com.drawquest.dtos.QuestCreateDTO;
+import com.drawquest.dtos.QuestResponseDTO;
+import com.drawquest.dtos.QuestUpdateDTO;
 import com.drawquest.exceptions.ResourceNotFoundException;
+import com.drawquest.mappers.QuestMapper;
 import com.drawquest.models.Quest;
 import com.drawquest.repositories.QuestRepository;
 import com.drawquest.services.QuestService;
@@ -9,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class QuestServiceImpl implements QuestService {
@@ -18,36 +22,43 @@ public class QuestServiceImpl implements QuestService {
 
     @Override
     public QuestResponseDTO getQuestById(Long id) {
-        return questRepository.findById(id)
+        Quest quest = questRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Quest with ID " + id + " not found"));
+        return QuestMapper.toQuestResponseDTO(quest);
     }
 
     @Override
     public QuestResponseDTO createQuest(QuestCreateDTO questCreateDTO) {
-        return questRepository.save(quest);
+        Quest newQuest = QuestMapper.toQuestEntity(questCreateDTO);
+        return QuestMapper.toQuestResponseDTO(questRepository.save(newQuest));
     }
 
     @Override
     public List<QuestResponseDTO> getAllQuests() {
-        return questRepository.findAll();
+        List<Quest> quests = questRepository.findAll();
+        return quests.stream()
+                .map(QuestMapper::toQuestResponseDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Quest updateQuest(Long id, QuestCreateDTO questCreateDTO) {
-        Quest existingQuest = getQuestById(id);
+    public QuestResponseDTO updateQuest(Long id, QuestUpdateDTO questUpdateDTO) {
+        Quest existingQuest = questRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Quest with ID " + id + " not found"));
 
-        existingQuest.setDescription(quest.getDescription());
-        existingQuest.setDifficulty(quest.getDifficulty());
-        existingQuest.setProgress(quest.getProgress());
-        existingQuest.setTitle(quest.getTitle());
+        existingQuest.setTitle(questUpdateDTO.getTitle());
+        existingQuest.setDescription(questUpdateDTO.getDescription());
+        existingQuest.setDifficulty(questUpdateDTO.getDifficulty());
+        existingQuest.setXpReward(questUpdateDTO.getXpReward());
 
-        return questRepository.save(existingQuest);
+        return QuestMapper.toQuestResponseDTO(questRepository.save(existingQuest));
     }
 
     @Override
     public void deleteQuest(Long id) {
-        Quest quest = getQuestById(id);
-        questRepository.delete(quest);
+        Quest existingQuest = questRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Quest with ID " + id + " not found"));
+        questRepository.delete(existingQuest);
     }
 }
 

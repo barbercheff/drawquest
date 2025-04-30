@@ -1,7 +1,8 @@
 package com.drawquest.controllers;
 
-import com.drawquest.dtos.UserResponseDTO;
-import com.drawquest.models.Quest;
+import com.drawquest.dtos.QuestCreateDTO;
+import com.drawquest.dtos.QuestResponseDTO;
+import com.drawquest.dtos.QuestUpdateDTO;
 import com.drawquest.services.QuestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,18 +25,17 @@ public class QuestController {
 
     @GetMapping("/{id}")
     public ResponseEntity<QuestResponseDTO> getQuestById(@PathVariable Long id) {
-        Quest quest = questService.getQuestById(id);
-        return ResponseEntity.ok(quest);
+        return ResponseEntity.ok(questService.getQuestById(id));
     }
 
     @PostMapping
-    public ResponseEntity<QuestResponseDTO> createQuest(@RequestBody Quest quest) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(questService.createQuest(quest));
+    public ResponseEntity<QuestResponseDTO> createQuest(@RequestBody QuestCreateDTO questCreateDTO) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(questService.createQuest(questCreateDTO));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<QuestResponseDTO> updateQuest(@PathVariable Long id, @RequestBody Quest quest) {
-        return ResponseEntity.ok(questService.updateQuest(id, quest));
+    public ResponseEntity<QuestResponseDTO> updateQuest(@PathVariable Long id, @RequestBody QuestUpdateDTO questUpdateDTO) {
+        return ResponseEntity.ok(questService.updateQuest(id, questUpdateDTO));
     }
 
     @DeleteMapping("/{id}")
