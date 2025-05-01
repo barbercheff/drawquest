@@ -1,8 +1,10 @@
 package com.drawquest.services.impl;
 
 import com.drawquest.dtos.DrawingCreateDTO;
+import com.drawquest.dtos.DrawingResponseDTO;
 import com.drawquest.dtos.DrawingUpdateDTO;
 import com.drawquest.exceptions.ResourceNotFoundException;
+import com.drawquest.mappers.DrawingMapper;
 import com.drawquest.models.Drawing;
 import com.drawquest.models.Quest;
 import com.drawquest.models.User;
@@ -13,8 +15,8 @@ import com.drawquest.services.DrawingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class DrawingServiceImpl implements DrawingService {
@@ -26,42 +28,56 @@ public class DrawingServiceImpl implements DrawingService {
     private QuestRepository questRepository;
 
     @Override
-    public Drawing getDrawingById(Long id) {
-        return drawingRepository.findById(id)
+    public DrawingResponseDTO getDrawingById(Long id) {
+        Drawing drawing = drawingRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Drawing with ID " + id + " not found"));
+        return DrawingMapper.toDrawingResponseDTO(drawing);
     }
 
     @Override
-    public Drawing createDrawing(DrawingCreateDTO drawingCreateDTO) {
-        Drawing newDrawing = new Drawing();
-        User user = userRepository.getReferenceById(drawingCreateDTO.getUserId());
-        Quest quest = questRepository.getReferenceById(drawingCreateDTO.getQuestId());
+    public DrawingResponseDTO createDrawing(DrawingCreateDTO drawingCreateDTO) {
+        // Obtener referencias a las entidades relacionadas
+        User user = userRepository.findById(drawingCreateDTO.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("User with ID " + drawingCreateDTO.getUserId() + " not found"));
 
-        newDrawing.setUser(user);
-        newDrawing.setQuest(quest);
-        newDrawing.setImageUrl(drawingCreateDTO.getImageUrl());
+        Quest quest = questRepository.findById(drawingCreateDTO.getQuestId())
+                .orElseThrow(() -> new ResourceNotFoundException("Quest with ID " + drawingCreateDTO.getQuestId() + " not found"));
 
-        return drawingRepository.save(newDrawing);
+        // Mapear DTO a entidad
+        Drawing drawing = DrawingMapper.toDrawingEntity(drawingCreateDTO, user, quest);
+        return DrawingMapper.toDrawingResponseDTO(drawingRepository.save(drawing));
     }
 
     @Override
-    public List<Drawing> getAllDrawings() {
-        return drawingRepository.findAll();
+    public List<DrawingResponseDTO> getAllDrawings() {
+        List<Drawing> drawings = drawingRepository.findAll();
+        return drawings.stream()
+                .map(DrawingMapper::toDrawingResponseDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Drawing updateDrawing(Long id, DrawingUpdateDTO drawing) {
-        Drawing existingDrawing = getDrawingById(id);
+    public DrawingResponseDTO updateDrawing(Long id, DrawingUpdateDTO drawingUpdateDTO) {
+        Drawing existingDrawing = drawingRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Drawing with ID " + id + " not found"));
 
-        existingDrawing.setModifiedAt(drawing.getModifiedAt());
-        existingDrawing.setImageUrl(drawing.getImageUrl());
+        if (drawingUpdateDTO.getImageUrl() != null) {
+            existingDrawing.setImageUrl(drawingUpdateDTO.getImageUrl());
+        }
 
-        return drawingRepository.save(existingDrawing);
+        if (drawingUpdateDTO.getModifiedAt() != null) {
+            existingDrawing.setModifiedAt(drawingUpdateDTO.getModifiedAt());
+        }
+
+        existingDrawing.setApproved(drawingUpdateDTO.isApproved());
+
+        return DrawingMapper.toDrawingResponseDTO(drawingRepository.save(existingDrawing));
     }
 
     @Override
     public void deleteDrawing(Long id) {
-        Drawing drawing = getDrawingById(id);
+        Drawing drawing = drawingRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Drawing with ID " + id + " not found"));
         drawingRepository.delete(drawing);
     }
 }

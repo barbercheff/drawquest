@@ -1,10 +1,8 @@
 package com.drawquest.controllers;
 
 import com.drawquest.dtos.DrawingCreateDTO;
+import com.drawquest.dtos.DrawingResponseDTO;
 import com.drawquest.dtos.DrawingUpdateDTO;
-import com.drawquest.dtos.UserCreateDTO;
-import com.drawquest.models.Drawing;
-import com.drawquest.models.Quest;
 import com.drawquest.services.DrawingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -16,13 +14,9 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/drawings")
@@ -36,7 +30,7 @@ public class DrawingController {
     @GetMapping
     @Operation(summary = "Obtiene todos los dibujos", description = "Devuelve una lista de todos los dibujos")
     @ApiResponse(responseCode = "200", description = "Lista obtenida con éxito")
-    public ResponseEntity<List<Drawing>> getAllDrawings() {
+    public ResponseEntity<List<DrawingResponseDTO>> getAllDrawings() {
         return ResponseEntity.ok(drawingService.getAllDrawings());
     }
 
@@ -44,9 +38,8 @@ public class DrawingController {
     @Operation(summary = "Obtiene un dibujo por ID", description = "Devuelve los datos de un dibujo específico")
     @ApiResponse(responseCode = "200", description = "Dibujo encontrado")
     @ApiResponse(responseCode = "404", description = "Dibujo no encontrado", content = @Content)
-    public ResponseEntity<Drawing> getDrawingById(@PathVariable Long id) {
-        Drawing drawing = drawingService.getDrawingById(id);
-        return ResponseEntity.ok(drawing);
+    public ResponseEntity<DrawingResponseDTO> getDrawingById(@PathVariable Long id) {
+        return ResponseEntity.ok(drawingService.getDrawingById(id));
     }
 
     @PostMapping(consumes = "multipart/form-data")
@@ -58,21 +51,14 @@ public class DrawingController {
                     @ApiResponse(responseCode = "400", description = "Datos de entrada no válidos")
             }
     )
-    public ResponseEntity<?> createDrawing(@Valid @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Datos del dibujo a crear",
+    public ResponseEntity<DrawingResponseDTO> createDrawing(@Valid @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Datos del dibujo a crear",
             required = true, content = @Content(schema = @Schema(implementation = DrawingCreateDTO.class)))
                                                            @org.springframework.web.bind.annotation.RequestBody DrawingCreateDTO drawingCreateDTO) {
-
-        if (drawingCreateDTO.getImageUrl().isEmpty()) {
-            return ResponseEntity.badRequest().body("Debe incluirse una imagen válida.");
-        }
-
-        Drawing newDrawing = drawingService.createDrawing(drawingCreateDTO);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(newDrawing);
+        return ResponseEntity.status(HttpStatus.CREATED).body(drawingService.createDrawing(drawingCreateDTO));
     }
 
     @Operation(summary = "Actualiza un dibujo existente", description = "Actualiza los datos de un dibujo específico")
-    @ApiResponse(responseCode = "200", description = "Dibujo actualizado con éxito", content = @Content(schema = @Schema(implementation = Drawing.class)))
+    @ApiResponse(responseCode = "200", description = "Dibujo actualizado con éxito", content = @Content(schema = @Schema(implementation = DrawingResponseDTO.class)))
     @ApiResponse(responseCode = "400", description = "Datos de entrada no válidos", content = @Content)
     @ApiResponse(responseCode = "404", description = "Dibujo no encontrado", content = @Content)
     @PutMapping("/{id}")
@@ -82,16 +68,9 @@ public class DrawingController {
                                                          required = true,
                                                          content = @Content(schema = @Schema(implementation = DrawingUpdateDTO.class))
                                                  )
-                                                 @RequestBody DrawingUpdateDTO drawingUpdateDTO,
-                                                 BindingResult result) {
-        if (result.hasErrors()) {
-            Map<String, String> errors = new HashMap<>();
-            result.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
-            return ResponseEntity.badRequest().body(errors);
-        }
+                                                 @RequestBody DrawingUpdateDTO drawingUpdateDTO) {
 
-        Drawing updatedDrawing = drawingService.updateDrawing(id, drawingUpdateDTO);
-        return ResponseEntity.ok(updatedDrawing);
+        return ResponseEntity.ok(drawingService.updateDrawing(id, drawingUpdateDTO));
     }
 
     @Operation(summary = "Elimina un dibujo", description = "Elimina un dibujo de la base de datos mediante su ID")
