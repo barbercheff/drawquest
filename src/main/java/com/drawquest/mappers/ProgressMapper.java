@@ -31,6 +31,7 @@ public class ProgressMapper {
         progress.setUser(user);
         progress.setQuest(quest);
         progress.setCompleted(progressCreateDTO.isCompleted());
+        progress.setAttempts(progressCreateDTO.getAttempts());
 
         return progress;
     }

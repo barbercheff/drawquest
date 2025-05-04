@@ -17,7 +17,7 @@ public class ProgressUpdateDTO {
         this.attempts = attempts;
     }
 
-    public Boolean getCompleted() {
+    public Boolean isCompleted() {
         return completed;
     }
 

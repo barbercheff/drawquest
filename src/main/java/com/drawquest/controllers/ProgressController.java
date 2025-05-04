@@ -1,6 +1,8 @@
 package com.drawquest.controllers;
 
-import com.drawquest.models.Progress;
+import com.drawquest.dtos.ProgressCreateDTO;
+import com.drawquest.dtos.ProgressResponseDTO;
+import com.drawquest.dtos.ProgressUpdateDTO;
 import com.drawquest.services.ProgressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,24 +19,23 @@ public class ProgressController {
     private ProgressService progressService;
 
     @GetMapping
-    public ResponseEntity<List<Progress>> getAllProgress() {
+    public ResponseEntity<List<ProgressResponseDTO>> getAllProgress() {
         return ResponseEntity.ok(progressService.getAllProgress());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Progress> getProgressById(@PathVariable Long id) {
-        Progress progress = progressService.getProgressById(id);
-        return ResponseEntity.ok(progress);
+    public ResponseEntity<ProgressResponseDTO> getProgressById(@PathVariable Long id) {
+        return ResponseEntity.ok(progressService.getProgressById(id));
     }
 
     @PostMapping
-    public ResponseEntity<Progress> createProgress(@RequestBody Progress progress) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(progressService.createProgress(progress));
+    public ResponseEntity<ProgressResponseDTO> createProgress(@RequestBody ProgressCreateDTO progressCreateDTO) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(progressService.createProgress(progressCreateDTO));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Progress> updateProgress(@PathVariable Long id, @RequestBody Progress progress) {
-        return ResponseEntity.ok(progressService.updateProgress(id, progress));
+    public ResponseEntity<ProgressResponseDTO> updateProgress(@PathVariable Long id, @RequestBody ProgressUpdateDTO progressUpdateDTO) {
+        return ResponseEntity.ok(progressService.updateProgress(id, progressUpdateDTO));
     }
 
     @DeleteMapping("/{id}")

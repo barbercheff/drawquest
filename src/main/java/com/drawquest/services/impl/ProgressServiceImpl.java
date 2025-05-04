@@ -1,50 +1,77 @@
 package com.drawquest.services.impl;
 
+import com.drawquest.dtos.ProgressCreateDTO;
+import com.drawquest.dtos.ProgressResponseDTO;
+import com.drawquest.dtos.ProgressUpdateDTO;
 import com.drawquest.exceptions.ResourceNotFoundException;
+import com.drawquest.mappers.ProgressMapper;
 import com.drawquest.models.Progress;
+import com.drawquest.models.Quest;
+import com.drawquest.models.User;
 import com.drawquest.repositories.ProgressRepository;
+import com.drawquest.repositories.QuestRepository;
+import com.drawquest.repositories.UserRepository;
 import com.drawquest.services.ProgressService;
+import com.drawquest.services.QuestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProgressServiceImpl implements ProgressService {
     @Autowired
     private ProgressRepository progressRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private QuestRepository questRepository;
+
     @Override
-    public Progress getProgressById(Long id) {
-        return progressRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Progress with ID " + id + " not found"));
+    public ProgressResponseDTO getProgressById(Long id) {
+        Progress progress = progressRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Progreso con ID " + id + " no encontrado"));
+        return ProgressMapper.toProgressResponseDTO(progress);
     }
 
     @Override
-    public Progress createProgress(Progress progress) {
-        return progressRepository.save(progress);
+    public ProgressResponseDTO createProgress(ProgressCreateDTO progressCreateDTO) {
+        User user = userRepository.findById(progressCreateDTO.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario con ID " + progressCreateDTO.getUserId() + " no encontrado"));
+        Quest quest = questRepository.findById(progressCreateDTO.getQuestId())
+                .orElseThrow(() -> new ResourceNotFoundException("Quest con ID " + progressCreateDTO.getQuestId() + " no encontrada"));
+
+        Progress progress = ProgressMapper.toProgressEntity(progressCreateDTO, user, quest);
+
+        return ProgressMapper.toProgressResponseDTO(progressRepository.save(progress));
     }
 
     @Override
-    public List<Progress> getAllProgress() {
-        return progressRepository.findAll();
+    public List<ProgressResponseDTO> getAllProgress() {
+        return progressRepository.findAll().stream()
+                .map(ProgressMapper::toProgressResponseDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Progress updateProgress(Long id, Progress progress) {
-        Progress existingProgress = getProgressById(id);
+    public ProgressResponseDTO updateProgress(Long id, ProgressUpdateDTO progressUpdateDTO) {
+        Progress existingProgress = progressRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Progreso con ID " + id + " no encontrado"));
 
-        existingProgress.setAttempts(progress.getAttempts());
-        existingProgress.setCompleted(progress.isCompleted());
-        existingProgress.setUser(progress.getUser());
-        existingProgress.setQuest(progress.getQuest());
 
-        return progressRepository.save(existingProgress);
+        existingProgress.setAttempts(progressUpdateDTO.getAttempts());
+        existingProgress.setCompleted(progressUpdateDTO.isCompleted());
+
+        return ProgressMapper.toProgressResponseDTO(progressRepository.save(existingProgress));
     }
 
     @Override
     public void deleteProgress(Long id) {
-        Progress progress = getProgressById(id);
+        Progress progress = progressRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Progreso con ID " + id + " no encontrado"));
         progressRepository.delete(progress);
     }
 }
