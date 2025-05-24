@@ -16,8 +16,12 @@ import java.util.stream.Collectors;
 
 @Service
 public class QuestServiceImpl implements QuestService {
-    @Autowired
-    private QuestRepository questRepository;
+
+    private final QuestRepository questRepository;
+
+    public QuestServiceImpl(QuestRepository questRepository) {
+        this.questRepository = questRepository;
+    }
 
 
     @Override

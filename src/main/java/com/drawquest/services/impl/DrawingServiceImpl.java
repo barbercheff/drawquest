@@ -20,12 +20,18 @@ import java.util.stream.Collectors;
 
 @Service
 public class DrawingServiceImpl implements DrawingService {
-    @Autowired
-    private DrawingRepository drawingRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private QuestRepository questRepository;
+
+    private final DrawingRepository drawingRepository;
+
+    private final UserRepository userRepository;
+
+    private final QuestRepository questRepository;
+
+    public DrawingServiceImpl(DrawingRepository drawingRepository, UserRepository userRepository, QuestRepository questRepository) {
+        this.drawingRepository = drawingRepository;
+        this.userRepository = userRepository;
+        this.questRepository = questRepository;
+    }
 
     @Override
     public DrawingResponseDTO getDrawingById(Long id) {

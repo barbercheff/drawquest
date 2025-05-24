@@ -21,14 +21,20 @@ import java.util.stream.Collectors;
 
 @Service
 public class ProgressServiceImpl implements ProgressService {
-    @Autowired
-    private ProgressRepository progressRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final ProgressRepository progressRepository;
 
-    @Autowired
-    private QuestRepository questRepository;
+
+    private final UserRepository userRepository;
+
+
+    private final QuestRepository questRepository;
+
+    public ProgressServiceImpl(ProgressRepository progressRepository, UserRepository userRepository, QuestRepository questRepository) {
+        this.progressRepository = progressRepository;
+        this.userRepository = userRepository;
+        this.questRepository = questRepository;
+    }
 
     @Override
     public ProgressResponseDTO getProgressById(Long id) {
