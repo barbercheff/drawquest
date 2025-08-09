@@ -69,7 +69,7 @@ public class ProgressServiceImpl implements ProgressService {
 
 
         existingProgress.setAttempts(progressUpdateDTO.getAttempts());
-        existingProgress.setCompleted(progressUpdateDTO.isCompleted());
+        existingProgress.setCompleted(progressUpdateDTO.getCompleted());
 
         return ProgressMapper.toProgressResponseDTO(progressRepository.save(existingProgress));
     }

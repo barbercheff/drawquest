@@ -3,7 +3,13 @@ package com.drawquest.dtos;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class QuestUpdateDTO {
 
     @NotBlank(message = "El título es obligatorio")
@@ -17,45 +23,4 @@ public class QuestUpdateDTO {
     @NotNull(message = "La recompensa de experiencia es obligatoria")
     @Min(value = 0, message = "La recompensa de experiencia no puede ser negativa")
     private Integer xpReward;
-
-    public QuestUpdateDTO() {}
-
-    public QuestUpdateDTO(String title, String description, int difficulty, Integer xpReward) {
-        this.title = title;
-        this.description = description;
-        this.difficulty = difficulty;
-        this.xpReward = xpReward;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public int getDifficulty() {
-        return difficulty;
-    }
-
-    public void setDifficulty(int difficulty) {
-        this.difficulty = difficulty;
-    }
-
-    public Integer getXpReward() {
-        return xpReward;
-    }
-
-    public void setXpReward(Integer xpReward) {
-        this.xpReward = xpReward;
-    }
 }
