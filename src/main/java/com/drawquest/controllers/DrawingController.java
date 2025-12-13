@@ -62,7 +62,7 @@ public class DrawingController {
     @ApiResponse(responseCode = "400", description = "Datos de entrada no válidos", content = @Content)
     @ApiResponse(responseCode = "404", description = "Dibujo no encontrado", content = @Content)
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateDrawing(@PathVariable Long id,
+    public ResponseEntity<DrawingResponseDTO> updateDrawing(@PathVariable Long id,
                                                  @Valid @io.swagger.v3.oas.annotations.parameters.RequestBody(
                                                          description = "Datos del dibujo a actualizar",
                                                          required = true,
