@@ -10,7 +10,6 @@ import com.drawquest.models.User;
 import com.drawquest.repositories.UserRepository;
 import com.drawquest.services.UserService;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

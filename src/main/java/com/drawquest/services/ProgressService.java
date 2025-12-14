@@ -3,7 +3,6 @@ package com.drawquest.services;
 import com.drawquest.dtos.ProgressCreateDTO;
 import com.drawquest.dtos.ProgressResponseDTO;
 import com.drawquest.dtos.ProgressUpdateDTO;
-import com.drawquest.models.Progress;
 
 import java.util.List;
 

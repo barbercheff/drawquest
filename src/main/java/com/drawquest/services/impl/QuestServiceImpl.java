@@ -8,7 +8,6 @@ import com.drawquest.mappers.QuestMapper;
 import com.drawquest.models.Quest;
 import com.drawquest.repositories.QuestRepository;
 import com.drawquest.services.QuestService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

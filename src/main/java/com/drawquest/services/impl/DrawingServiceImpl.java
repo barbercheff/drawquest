@@ -12,7 +12,6 @@ import com.drawquest.repositories.DrawingRepository;
 import com.drawquest.repositories.QuestRepository;
 import com.drawquest.repositories.UserRepository;
 import com.drawquest.services.DrawingService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

@@ -3,7 +3,6 @@ package com.drawquest.services;
 import com.drawquest.dtos.UserCreateDTO;
 import com.drawquest.dtos.UserResponseDTO;
 import com.drawquest.dtos.UserUpdateDTO;
-import com.drawquest.models.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
