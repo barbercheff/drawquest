@@ -1,56 +1,54 @@
 package com.drawquest.handlers;
 
+import com.drawquest.dtos.ErrorResponseDTO;
 import com.drawquest.exceptions.DuplicateResourceException;
 import com.drawquest.exceptions.ResourceNotFoundException;
 import com.drawquest.exceptions.UnauthorizedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@ControllerAdvice
-public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+import java.util.HashMap;
+import java.util.Map;
+
+@RestControllerAdvice
+public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleResourceNotFound(ResourceNotFoundException ex) {
-        ErrorResponse error = new ErrorResponse("NOT_FOUND", ex.getMessage());
-        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    public ResponseEntity<ErrorResponseDTO> handleResourceNotFound(ResourceNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponseDTO("NOT_FOUND", ex.getMessage()));
     }
 
     @ExceptionHandler(DuplicateResourceException.class)
-    public ResponseEntity<String> handleDuplicateResourceException(DuplicateResourceException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    public ResponseEntity<ErrorResponseDTO> handleDuplicate(DuplicateResourceException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ErrorResponseDTO("DUPLICATE_RESOURCE", ex.getMessage()));
     }
 
     @ExceptionHandler(UnauthorizedException.class)
-    public ResponseEntity<String> handleUnauthorizedException(UnauthorizedException ex) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
+    public ResponseEntity<ErrorResponseDTO> handleUnauthorized(UnauthorizedException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ErrorResponseDTO("UNAUTHORIZED", ex.getMessage()));
     }
 
-    public static class ErrorResponse {
-        private String errorCode;
-        private String errorMessage;
-
-        public ErrorResponse(String errorCode, String errorMessage) {
-            this.errorCode = errorCode;
-            this.errorMessage = errorMessage;
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponseDTO> handleValidation(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
+            errors.put(fieldError.getField(), fieldError.getDefaultMessage());
         }
 
-        public String getErrorCode() {
-            return errorCode;
-        }
+        return ResponseEntity.badRequest()
+                .body(new ErrorResponseDTO("VALIDATION_ERROR", "Hay campos inválidos", errors));
+    }
 
-        public void setErrorCode(String errorCode) {
-            this.errorCode = errorCode;
-        }
-
-        public String getErrorMessage() {
-            return errorMessage;
-        }
-
-        public void setErrorMessage(String errorMessage) {
-            this.errorMessage = errorMessage;
-        }
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponseDTO> handleGeneric(Exception ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponseDTO("INTERNAL_ERROR", "Error inesperado"));
     }
 }
