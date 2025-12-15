@@ -51,4 +51,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ErrorResponseDTO("INTERNAL_ERROR", "Error inesperado"));
     }
+
+    @ExceptionHandler(org.springframework.http.converter.HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponseDTO> handleBadJson(Exception ex) {
+        return ResponseEntity.badRequest()
+                .body(new ErrorResponseDTO("BAD_REQUEST", "JSON inválido o mal formado"));
+    }
 }
