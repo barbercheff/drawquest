@@ -42,9 +42,9 @@ public class ProgressServiceImpl implements ProgressService {
     }
 
     @Override
-    public ProgressResponseDTO createProgress(ProgressCreateDTO progressCreateDTO) {
-        User user = userRepository.findById(progressCreateDTO.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario con ID " + progressCreateDTO.getUserId() + " no encontrado"));
+    public ProgressResponseDTO createProgress(ProgressCreateDTO progressCreateDTO, String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario con nombre " + username + " no encontrado"));
         Quest quest = questRepository.findById(progressCreateDTO.getQuestId())
                 .orElseThrow(() -> new ResourceNotFoundException("Quest con ID " + progressCreateDTO.getQuestId() + " no encontrada"));
 

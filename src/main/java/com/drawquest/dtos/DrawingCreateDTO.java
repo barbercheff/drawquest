@@ -12,9 +12,6 @@ import org.hibernate.validator.constraints.URL;
 @AllArgsConstructor
 public class DrawingCreateDTO {
 
-    @NotNull(message = "El id del usuario es obligatorio")
-    private Long userId;
-
     @NotNull(message = "El id de la quest es obligatorio")
     private Long questId;
 

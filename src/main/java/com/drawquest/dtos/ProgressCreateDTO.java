@@ -11,9 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ProgressCreateDTO {
 
-    @NotNull(message = "El ID del usuario es obligatorio")
-    private Long userId;
-
     @NotNull(message = "El ID de la quest es obligatorio")
     private Long questId;
 

@@ -4,9 +4,12 @@ import com.drawquest.dtos.ProgressCreateDTO;
 import com.drawquest.dtos.ProgressResponseDTO;
 import com.drawquest.dtos.ProgressUpdateDTO;
 import com.drawquest.services.ProgressService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,8 +32,10 @@ public class ProgressController {
     }
 
     @PostMapping
-    public ResponseEntity<ProgressResponseDTO> createProgress(@RequestBody ProgressCreateDTO progressCreateDTO) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(progressService.createProgress(progressCreateDTO));
+    public ResponseEntity<ProgressResponseDTO> createProgress(@Valid @RequestBody ProgressCreateDTO progressCreateDTO,
+                                                              @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(progressService.createProgress(progressCreateDTO, userDetails.getUsername()));
     }
 
     @PutMapping("/{id}")

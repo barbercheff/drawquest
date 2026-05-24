@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ProgressService {
     ProgressResponseDTO getProgressById(Long id);
-    ProgressResponseDTO createProgress(ProgressCreateDTO progressCreateDTO);
+    ProgressResponseDTO createProgress(ProgressCreateDTO progressCreateDTO, String username);
     List<ProgressResponseDTO> getAllProgress();
     ProgressResponseDTO updateProgress(Long id, ProgressUpdateDTO progressUpdateDTO);
     void deleteProgress(Long id);

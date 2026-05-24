@@ -14,6 +14,8 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -63,8 +65,10 @@ public class DrawingController {
     @PostMapping
     public ResponseEntity<DrawingResponseDTO> createDrawing(@Valid @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Datos del dibujo a crear",
             required = true, content = @Content(schema = @Schema(implementation = DrawingCreateDTO.class)))
-                                                           @org.springframework.web.bind.annotation.RequestBody DrawingCreateDTO drawingCreateDTO) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(drawingService.createDrawing(drawingCreateDTO));
+                                                           @org.springframework.web.bind.annotation.RequestBody DrawingCreateDTO drawingCreateDTO,
+                                                           @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(drawingService.createDrawing(drawingCreateDTO, userDetails.getUsername()));
     }
 
     @Operation(

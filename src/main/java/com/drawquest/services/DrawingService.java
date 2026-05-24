@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface DrawingService {
     DrawingResponseDTO getDrawingById(Long id);
-    DrawingResponseDTO createDrawing(DrawingCreateDTO drawingCreateDTO);
+    DrawingResponseDTO createDrawing(DrawingCreateDTO drawingCreateDTO, String username);
     List<DrawingResponseDTO> getAllDrawings();
     DrawingResponseDTO updateDrawing(Long id, DrawingUpdateDTO drawing);
     void deleteDrawing(Long id);

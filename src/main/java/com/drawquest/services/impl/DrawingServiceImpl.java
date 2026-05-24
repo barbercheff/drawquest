@@ -40,15 +40,13 @@ public class DrawingServiceImpl implements DrawingService {
     }
 
     @Override
-    public DrawingResponseDTO createDrawing(DrawingCreateDTO drawingCreateDTO) {
-        // Obtener referencias a las entidades relacionadas
-        User user = userRepository.findById(drawingCreateDTO.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("User with ID " + drawingCreateDTO.getUserId() + " not found"));
+    public DrawingResponseDTO createDrawing(DrawingCreateDTO drawingCreateDTO, String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User with username " + username + " not found"));
 
         Quest quest = questRepository.findById(drawingCreateDTO.getQuestId())
                 .orElseThrow(() -> new ResourceNotFoundException("Quest with ID " + drawingCreateDTO.getQuestId() + " not found"));
 
-        // Mapear DTO a entidad
         Drawing drawing = DrawingMapper.toDrawingEntity(drawingCreateDTO, user, quest);
         return DrawingMapper.toDrawingResponseDTO(drawingRepository.save(drawing));
     }
