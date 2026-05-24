@@ -3,8 +3,6 @@ package com.drawquest.controllers;
 import com.drawquest.dtos.UserCreateDTO;
 import com.drawquest.dtos.UserLoginDTO;
 import com.drawquest.dtos.UserResponseDTO;
-import com.drawquest.models.User;
-import com.drawquest.security.JwtUtil;
 import com.drawquest.services.AuthService;
 import com.drawquest.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,13 +15,15 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
-@Tag(name = "Autenticación", description = "Endpoints para autenticación y registro")
+@Tag(name = "Autenticacion", description = "Endpoints para autenticacion y registro")
 public class AuthController {
 
     @Autowired
@@ -33,15 +33,12 @@ public class AuthController {
     private AuthService authService;
 
     @Autowired
-    private JwtUtil jwtUtil;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
-    @Operation(summary = "Registrar usuario", description = "Crea un nuevo usuario en la aplicación")
+    @Operation(summary = "Registrar usuario", description = "Crea un nuevo usuario en la aplicacion")
     @ApiResponse(responseCode = "200", description = "Usuario registrado correctamente")
-    @ApiResponse(responseCode = "400", description = "Datos inválidos o error en la solicitud")
+    @ApiResponse(responseCode = "400", description = "Datos invalidos o error en la solicitud")
     public ResponseEntity<UserResponseDTO> register(
             @Valid @RequestBody(description = "Datos del usuario a registrar", required = true,
                     content = @Content(schema = @Schema(implementation = UserCreateDTO.class)))
@@ -52,15 +49,15 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    @Operation(summary = "Autenticar usuario", description = "Genera un token JWT al iniciar sesión")
-    @ApiResponse(responseCode = "200", description = "Inicio de sesión exitoso, devuelve el token JWT")
-    @ApiResponse(responseCode = "401", description = "Credenciales inválidas")
+    @Operation(summary = "Autenticar usuario", description = "Genera un token JWT al iniciar sesion")
+    @ApiResponse(responseCode = "200", description = "Inicio de sesion exitoso, devuelve el token JWT")
+    @ApiResponse(responseCode = "401", description = "Credenciales invalidas")
     @ApiResponse(responseCode = "400", description = "Error en la solicitud")
     public ResponseEntity<Map<String, String>> login(
-            @RequestBody(description = "Credenciales del usuario para iniciar sesión", required = true,
+            @Valid @RequestBody(description = "Credenciales del usuario para iniciar sesion", required = true,
                     content = @Content(schema = @Schema(implementation = UserLoginDTO.class)))
             @org.springframework.web.bind.annotation.RequestBody UserLoginDTO userLoginDTO) {
 
-            return ResponseEntity.ok(Map.of("token", authService.authenticate(userLoginDTO)));
+        return ResponseEntity.ok(Map.of("token", authService.authenticate(userLoginDTO)));
     }
 }

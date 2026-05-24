@@ -1,34 +1,34 @@
 package com.drawquest.services.impl;
 
 import com.drawquest.dtos.UserLoginDTO;
-import com.drawquest.dtos.UserResponseDTO;
 import com.drawquest.exceptions.UnauthorizedException;
+import com.drawquest.models.User;
+import com.drawquest.repositories.UserRepository;
 import com.drawquest.security.JwtUtil;
 import com.drawquest.services.AuthService;
-import com.drawquest.services.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AuthServiceImpl implements AuthService {
 
-    private final UserService userService;
+    private final UserRepository userRepository;
 
     private final PasswordEncoder passwordEncoder;
 
     private final JwtUtil jwtUtil;
 
-    public AuthServiceImpl(UserService userService, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
-        this.userService = userService;
+    public AuthServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
+        this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
     }
 
     public String authenticate(UserLoginDTO userLoginDTO) {
-        UserResponseDTO existingUser = userService.getUserByUsername(userLoginDTO.getUsername());
+        User existingUser = userRepository.findByUsername(userLoginDTO.getUsername())
+                .orElseThrow(() -> new UnauthorizedException("Credenciales incorrectas"));
 
-        if (existingUser == null || !passwordEncoder.matches(userLoginDTO.getPassword(), userLoginDTO.getPassword())) {
+        if (!passwordEncoder.matches(userLoginDTO.getPassword(), existingUser.getPassword())) {
             throw new UnauthorizedException("Credenciales incorrectas");
         }
 
