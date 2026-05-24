@@ -1,9 +1,13 @@
 package com.drawquest.models;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "quests")
 public class Quest {
@@ -29,60 +33,5 @@ public class Quest {
     @OneToMany(mappedBy = "quest")
     private List<Drawing> drawings; // Dibujos subidos para esta quest
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public int getDifficulty() {
-        return difficulty;
-    }
-
-    public void setDifficulty(int difficulty) {
-        this.difficulty = difficulty;
-    }
-
-    public List<Progress> getProgress() {
-        return progress;
-    }
-
-    public void setProgress(List<Progress> progress) {
-        this.progress = progress;
-    }
-
-    public int getXpReward() {
-        return xpReward;
-    }
-
-    public void setXpReward(int xpReward) {
-        this.xpReward = xpReward;
-    }
-
-    public List<Drawing> getDrawings() {
-        return drawings;
-    }
-
-    public void setDrawings(List<Drawing> drawings) {
-        this.drawings = drawings;
-    }
 }
 
