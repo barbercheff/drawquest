@@ -7,11 +7,13 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@Setter
 @Getter
 @Entity
 @Table(name = "users")
@@ -64,40 +66,5 @@ public class User {
         this.roles = roles;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setLevel(int level) {
-        this.level = level;
-    }
-
-    public void setProgress(List<Progress> progress) {
-        this.progress = progress;
-    }
-
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
-
-    public void setXp(int xp) {
-        this.xp = xp;
-    }
-
-    public void setDrawings(List<Drawing> drawings) {
-        this.drawings = drawings;
-    }
 }
 
