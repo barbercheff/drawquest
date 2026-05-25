@@ -1,6 +1,8 @@
 package com.drawquest.security;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,7 +20,6 @@ public class JwtUtil {
     @Value("${jwt.expirationMs}")
     private int expirationTime;
 
-    // Generar un token JWT
     public String generateToken(String username) {
         return Jwts.builder()
                 .subject(username)
@@ -28,7 +29,6 @@ public class JwtUtil {
                 .compact();
     }
 
-    // Validar el token
     public boolean validateToken(String token) {
         try {
             Jwts.parser().setSigningKey(key()).build().parseSignedClaims(token);
@@ -38,7 +38,6 @@ public class JwtUtil {
         }
     }
 
-    // Obtener el nombre de usuario del token
     public String getUsernameFromToken(String token) {
         return Jwts.parser()
                 .setSigningKey(key())

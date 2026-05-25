@@ -11,11 +11,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ProgressCreateDTO {
 
-    @NotNull(message = "El ID de la quest es obligatorio")
+    @NotNull(message = "Quest ID is required")
     private Long questId;
 
     private boolean completed = false;
 
-    @Min(value = 0, message = "Los intentos no pueden ser negativos")
+    @Min(value = 0, message = "Attempts cannot be negative")
     private int attempts = 0;
 }

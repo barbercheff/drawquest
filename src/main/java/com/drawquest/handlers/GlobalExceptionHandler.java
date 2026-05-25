@@ -43,18 +43,18 @@ public class GlobalExceptionHandler {
         }
 
         return ResponseEntity.badRequest()
-                .body(new ErrorResponseDTO("VALIDATION_ERROR", "Hay campos inválidos", errors));
+                .body(new ErrorResponseDTO("VALIDATION_ERROR", "Some fields are invalid", errors));
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDTO> handleGeneric(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ErrorResponseDTO("INTERNAL_ERROR", "Error inesperado"));
+                .body(new ErrorResponseDTO("INTERNAL_ERROR", "Unexpected error"));
     }
 
     @ExceptionHandler(org.springframework.http.converter.HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponseDTO> handleBadJson(Exception ex) {
         return ResponseEntity.badRequest()
-                .body(new ErrorResponseDTO("BAD_REQUEST", "JSON inválido o mal formado"));
+                .body(new ErrorResponseDTO("BAD_REQUEST", "Invalid or malformed JSON"));
     }
 }

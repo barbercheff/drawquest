@@ -45,13 +45,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = authHeader.substring(7);
 
         try {
-            // 1) Valida token primero (si ya es inválido, fuera)
             if (!jwtUtil.validateToken(token)) {
                 writeUnauthorized(response);
                 return;
             }
 
-            // 2) Extrae username del token (ya validado)
             String username;
             try {
                 username = jwtUtil.getUsernameFromToken(token);
@@ -60,16 +58,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
 
-            // 3) Si ya hay auth en contexto, sigue
             if (username == null || SecurityContextHolder.getContext().getAuthentication() != null) {
                 filterChain.doFilter(request, response);
                 return;
             }
 
-            // 4) Carga usuario (si lo han borrado, aquí explotaría)
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-            // 5) Autentica en el contexto
             UsernamePasswordAuthenticationToken authToken =
                     new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
@@ -79,7 +74,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
 
         } catch (Exception ex) {
-            // Token corrupto, expirado, usuario inexistente, etc.
             writeUnauthorized(response);
         }
     }
@@ -90,7 +84,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         ErrorResponseDTO body = new ErrorResponseDTO(
                 "UNAUTHORIZED",
-                "Token inválido o no autorizado"
+                "Invalid or unauthorized token"
         );
 
         response.getWriter().write(objectMapper.writeValueAsString(body));

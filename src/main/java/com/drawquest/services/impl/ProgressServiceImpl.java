@@ -22,9 +22,7 @@ public class ProgressServiceImpl implements ProgressService {
 
     private final ProgressRepository progressRepository;
 
-
     private final UserRepository userRepository;
-
 
     private final QuestRepository questRepository;
 
@@ -37,16 +35,16 @@ public class ProgressServiceImpl implements ProgressService {
     @Override
     public ProgressResponseDTO getProgressById(Long id) {
         Progress progress = progressRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Progreso con ID " + id + " no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Progress with ID " + id + " not found"));
         return ProgressMapper.toProgressResponseDTO(progress);
     }
 
     @Override
     public ProgressResponseDTO createProgress(ProgressCreateDTO progressCreateDTO, String username) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario con nombre " + username + " no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("User with username " + username + " not found"));
         Quest quest = questRepository.findById(progressCreateDTO.getQuestId())
-                .orElseThrow(() -> new ResourceNotFoundException("Quest con ID " + progressCreateDTO.getQuestId() + " no encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Quest with ID " + progressCreateDTO.getQuestId() + " not found"));
 
         Progress progress = ProgressMapper.toProgressEntity(progressCreateDTO, user, quest);
 
@@ -63,8 +61,7 @@ public class ProgressServiceImpl implements ProgressService {
     @Override
     public ProgressResponseDTO updateProgress(Long id, ProgressUpdateDTO progressUpdateDTO) {
         Progress existingProgress = progressRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Progreso con ID " + id + " no encontrado"));
-
+                .orElseThrow(() -> new ResourceNotFoundException("Progress with ID " + id + " not found"));
 
         existingProgress.setAttempts(progressUpdateDTO.getAttempts());
         existingProgress.setCompleted(progressUpdateDTO.getCompleted());
@@ -75,8 +72,7 @@ public class ProgressServiceImpl implements ProgressService {
     @Override
     public void deleteProgress(Long id) {
         Progress progress = progressRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Progreso con ID " + id + " no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Progress with ID " + id + " not found"));
         progressRepository.delete(progress);
     }
 }
-

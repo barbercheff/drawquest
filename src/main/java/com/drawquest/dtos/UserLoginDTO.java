@@ -1,9 +1,7 @@
 package com.drawquest.dtos;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,10 +14,9 @@ public class UserLoginDTO {
     @JsonIgnore
     private Long id;
 
-    @NotBlank(message = "El nombre de usuario es obligatorio")
+    @NotBlank(message = "Username is required")
     private String username;
 
-    @NotBlank(message = "La contraseña es obligatoria")
+    @NotBlank(message = "Password is required")
     private String password;
 }
-

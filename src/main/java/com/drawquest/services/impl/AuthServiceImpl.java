@@ -26,10 +26,10 @@ public class AuthServiceImpl implements AuthService {
 
     public String authenticate(UserLoginDTO userLoginDTO) {
         User existingUser = userRepository.findByUsername(userLoginDTO.getUsername())
-                .orElseThrow(() -> new UnauthorizedException("Credenciales incorrectas"));
+                .orElseThrow(() -> new UnauthorizedException("Invalid credentials"));
 
         if (!passwordEncoder.matches(userLoginDTO.getPassword(), existingUser.getPassword())) {
-            throw new UnauthorizedException("Credenciales incorrectas");
+            throw new UnauthorizedException("Invalid credentials");
         }
 
         return jwtUtil.generateToken(existingUser.getUsername());

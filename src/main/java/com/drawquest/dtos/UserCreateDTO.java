@@ -16,16 +16,14 @@ public class UserCreateDTO {
     @JsonIgnore
     private Long id;
 
-    @NotBlank(message = "El nombre de usuario es obligatorio")
+    @NotBlank(message = "Username is required")
     private String username;
 
-    @NotBlank(message = "La contraseña es obligatoria")
-    @NotBlank(message = "La contraseña es obligatoria")
-    @Size(min = 6, message = "La contraseña debe tener al menos 6 caracteres")
+    @NotBlank(message = "Password is required")
+    @Size(min = 6, message = "Password must have at least 6 characters")
     private String password;
 
-    @NotBlank(message = "El email es obligatorio")
-    @Email(message = "El email debe ser válido")
+    @NotBlank(message = "Email is required")
+    @Email(message = "Email must be valid")
     private String email;
 }
-

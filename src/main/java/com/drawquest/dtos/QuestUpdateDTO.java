@@ -12,15 +12,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class QuestUpdateDTO {
 
-    @NotBlank(message = "El título es obligatorio")
+    @NotBlank(message = "Title is required")
     private String title;
 
     private String description;
 
-    @Min(value = 1, message = "La dificultad debe ser al menos 1")
+    @Min(value = 1, message = "Difficulty must be at least 1")
     private int difficulty;
 
-    @NotNull(message = "La recompensa de experiencia es obligatoria")
-    @Min(value = 0, message = "La recompensa de experiencia no puede ser negativa")
+    @NotNull(message = "XP reward is required")
+    @Min(value = 0, message = "XP reward cannot be negative")
     private Integer xpReward;
 }

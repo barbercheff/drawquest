@@ -12,6 +12,6 @@ public class ProgressUpdateDTO {
 
     private Boolean completed;
 
-    @Min(value = 0, message = "Los intentos no pueden ser negativos")
+    @Min(value = 0, message = "Attempts cannot be negative")
     private Integer attempts;
 }

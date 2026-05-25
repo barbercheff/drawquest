@@ -12,10 +12,10 @@ import org.hibernate.validator.constraints.URL;
 @AllArgsConstructor
 public class DrawingCreateDTO {
 
-    @NotNull(message = "El id de la quest es obligatorio")
+    @NotNull(message = "Quest ID is required")
     private Long questId;
 
-    @NotBlank(message = "La URL de la imagen es obligatoria")
-    @URL(message = "Debe ser una URL válida")
+    @NotBlank(message = "Image URL is required")
+    @URL(message = "Must be a valid URL")
     private String imageUrl;
 }

@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public UserResponseDTO getUserByUsername(String username) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("User with user name " + username + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User with username " + username + " not found"));
         return UserMapper.toUserResponseDTO(user);
     }
 
@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         try {
             return UserMapper.toUserResponseDTO(userRepository.save(newUser));
         } catch (DataIntegrityViolationException e) {
-            throw new DuplicateResourceException("El nombre de usuario o el email ya están en uso.");
+            throw new DuplicateResourceException("Username or email is already in use.");
         }
     }
 
@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public List<UserResponseDTO> getAllUsers() {
         List<User> users = userRepository.findAll();
         return users.stream()
-                .map(UserMapper::toUserResponseDTO) // convertir cada entidad a DTO
+                .map(UserMapper::toUserResponseDTO)
                 .collect(Collectors.toList());
     }
 
@@ -65,7 +65,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public UserResponseDTO updateUser(Long id, UserUpdateDTO userUpdateDTO) {
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User with ID " + id + " not found"));
-
 
         existingUser.setLevel(userUpdateDTO.getLevel());
         existingUser.setXp(userUpdateDTO.getXp());
@@ -88,9 +87,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("User with name " + username + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User with username " + username + " not found"));
 
         return UserDetailsImpl.build(user);
     }
 }
-
