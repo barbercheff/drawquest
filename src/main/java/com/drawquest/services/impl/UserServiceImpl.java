@@ -3,10 +3,13 @@ package com.drawquest.services.impl;
 import com.drawquest.dtos.UserCreateDTO;
 import com.drawquest.dtos.UserResponseDTO;
 import com.drawquest.dtos.UserUpdateDTO;
+import com.drawquest.enums.ERole;
 import com.drawquest.exceptions.DuplicateResourceException;
 import com.drawquest.exceptions.ResourceNotFoundException;
 import com.drawquest.mappers.UserMapper;
+import com.drawquest.models.Role;
 import com.drawquest.models.User;
+import com.drawquest.repositories.RoleRepository;
 import com.drawquest.repositories.UserRepository;
 import com.drawquest.services.UserService;
 import jakarta.transaction.Transactional;
@@ -24,8 +27,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     private final UserRepository userRepository;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    private final RoleRepository roleRepository;
+
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
     }
 
     @Override
@@ -45,6 +51,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public UserResponseDTO createUser(UserCreateDTO userCreateDTO) {
         User newUser = UserMapper.toUserEntity(userCreateDTO);
+        Role defaultRole = roleRepository.findByName(ERole.ROLE_USER)
+                .orElseThrow(() -> new ResourceNotFoundException("Default user role not found"));
+        newUser.getRoles().add(defaultRole);
 
         try {
             return UserMapper.toUserResponseDTO(userRepository.save(newUser));
