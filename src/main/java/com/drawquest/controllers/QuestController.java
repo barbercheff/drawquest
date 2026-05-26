@@ -4,7 +4,6 @@ import com.drawquest.dtos.QuestCreateDTO;
 import com.drawquest.dtos.QuestResponseDTO;
 import com.drawquest.dtos.QuestUpdateDTO;
 import com.drawquest.services.QuestService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,8 +14,11 @@ import java.util.List;
 @RequestMapping("/quests")
 public class QuestController {
 
-    @Autowired
-    private QuestService questService;
+    private final QuestService questService;
+
+    public QuestController(QuestService questService) {
+        this.questService = questService;
+    }
 
     @GetMapping
     public ResponseEntity<List<QuestResponseDTO>> getAllQuests() {

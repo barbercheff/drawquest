@@ -5,7 +5,6 @@ import com.drawquest.dtos.ProgressResponseDTO;
 import com.drawquest.dtos.ProgressUpdateDTO;
 import com.drawquest.services.ProgressService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,8 +17,11 @@ import java.util.List;
 @RequestMapping("/progress")
 public class ProgressController {
 
-    @Autowired
-    private ProgressService progressService;
+    private final ProgressService progressService;
+
+    public ProgressController(ProgressService progressService) {
+        this.progressService = progressService;
+    }
 
     @GetMapping
     public ResponseEntity<List<ProgressResponseDTO>> getAllProgress(@AuthenticationPrincipal UserDetails userDetails) {

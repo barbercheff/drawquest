@@ -12,7 +12,6 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,14 +25,17 @@ import java.util.Map;
 @Tag(name = "Authentication", description = "Authentication and registration endpoints")
 public class AuthController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    private AuthService authService;
+    private final AuthService authService;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
+
+    public AuthController(UserService userService, AuthService authService, PasswordEncoder passwordEncoder) {
+        this.userService = userService;
+        this.authService = authService;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @PostMapping("/register")
     @Operation(summary = "Register user", description = "Creates a new user")
