@@ -2,7 +2,6 @@ package com.drawquest.services.impl;
 
 import com.drawquest.dtos.UserCreateDTO;
 import com.drawquest.dtos.UserResponseDTO;
-import com.drawquest.dtos.UserUpdateDTO;
 import com.drawquest.enums.ERole;
 import com.drawquest.exceptions.DuplicateResourceException;
 import com.drawquest.exceptions.ResourceNotFoundException;
@@ -68,19 +67,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return users.stream()
                 .map(UserMapper::toUserResponseDTO)
                 .collect(Collectors.toList());
-    }
-
-    @Override
-    public UserResponseDTO updateUser(Long id, UserUpdateDTO userUpdateDTO, String username) {
-        User existingUser = userRepository.findByIdAndUsername(id, username)
-                .orElseThrow(() -> new ResourceNotFoundException("User with ID " + id + " not found"));
-
-        existingUser.setLevel(userUpdateDTO.getLevel());
-        existingUser.setXp(userUpdateDTO.getXp());
-
-        User updatedUser = userRepository.save(existingUser);
-
-        return UserMapper.toUserResponseDTO(updatedUser);
     }
 
     @Override

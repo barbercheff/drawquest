@@ -10,5 +10,6 @@ public interface DrawingService {
     DrawingResponseDTO createDrawing(DrawingCreateDTO drawingCreateDTO, String username);
     List<DrawingResponseDTO> getAllDrawings(String username);
     DrawingResponseDTO updateDrawing(Long id, DrawingUpdateDTO drawing, String username);
+    DrawingResponseDTO approveDrawing(Long id);
     void deleteDrawing(Long id, String username);
 }

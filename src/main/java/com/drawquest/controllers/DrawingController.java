@@ -86,7 +86,7 @@ public class DrawingController {
 
     @Operation(
             summary = "Update drawing",
-            description = "Updates a specific drawing",
+            description = "Updates a specific drawing submission",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Drawing updated successfully", content = @Content(schema = @Schema(implementation = DrawingResponseDTO.class))),
                     @ApiResponse(responseCode = "400", description = "Invalid input data", content = @Content),
@@ -103,6 +103,20 @@ public class DrawingController {
             @RequestBody DrawingUpdateDTO drawingUpdateDTO,
             @AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(drawingService.updateDrawing(id, drawingUpdateDTO, userDetails.getUsername()));
+    }
+
+    @Operation(
+            summary = "Approve drawing",
+            description = "Approves a drawing, completes its quest, and awards XP if the quest was not completed yet",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Drawing approved successfully", content = @Content(schema = @Schema(implementation = DrawingResponseDTO.class))),
+                    @ApiResponse(responseCode = "403", description = "Admin or moderator role required", content = @Content),
+                    @ApiResponse(responseCode = "404", description = "Drawing not found", content = @Content)
+            }
+    )
+    @PutMapping("/{id}/approve")
+    public ResponseEntity<DrawingResponseDTO> approveDrawing(@PathVariable Long id) {
+        return ResponseEntity.ok(drawingService.approveDrawing(id));
     }
 
     @Operation(summary = "Delete drawing", description = "Deletes a drawing by ID")

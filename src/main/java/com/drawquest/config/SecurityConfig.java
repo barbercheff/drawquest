@@ -75,6 +75,7 @@ public class SecurityConfig {
                                 "/api-docs.yaml"
                         ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/users").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/drawings/*/approve").hasAnyRole("ADMIN", "MODERATOR")
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex
