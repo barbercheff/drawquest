@@ -14,6 +14,8 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,19 +36,20 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @Operation(summary = "Get all users", description = "Returns all registered users")
-    @ApiResponse(responseCode = "200", description = "List retrieved successfully")
+    @Operation(summary = "Get current user", description = "Returns the authenticated user")
+    @ApiResponse(responseCode = "200", description = "User retrieved successfully")
     @GetMapping
-    public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+    public ResponseEntity<List<UserResponseDTO>> getAllUsers(@AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(userService.getAllUsers(userDetails.getUsername()));
     }
 
     @Operation(summary = "Get user by ID", description = "Returns a specific user")
     @ApiResponse(responseCode = "200", description = "User found")
     @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.getUserById(id));
+    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Long id,
+                                                       @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(userService.getUserById(id, userDetails.getUsername()));
     }
 
     @Operation(summary = "Create user", description = "Creates a user in the database")
@@ -73,16 +76,18 @@ public class UserController {
                     description = "User update data",
                     required = true,
                     content = @Content(schema = @Schema(implementation = UserUpdateDTO.class)))
-            @RequestBody UserUpdateDTO userUpdateDTO) {
-        return ResponseEntity.ok(userService.updateUser(id, userUpdateDTO));
+            @RequestBody UserUpdateDTO userUpdateDTO,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(userService.updateUser(id, userUpdateDTO, userDetails.getUsername()));
     }
 
     @Operation(summary = "Delete user", description = "Deletes a user by ID")
     @ApiResponse(responseCode = "204", description = "User deleted successfully", content = @Content)
     @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id,
+                                           @AuthenticationPrincipal UserDetails userDetails) {
+        userService.deleteUser(id, userDetails.getUsername());
         return ResponseEntity.noContent().build();
     }
 }

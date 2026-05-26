@@ -20,7 +20,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Collections;
 
 @Service
 public class UserServiceImpl implements UserService, UserDetailsService {
@@ -35,8 +35,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public UserResponseDTO getUserById(Long id) {
-        User user = userRepository.findById(id)
+    public UserResponseDTO getUserById(Long id, String username) {
+        User user = userRepository.findByIdAndUsername(id, username)
                 .orElseThrow(() -> new ResourceNotFoundException("User with ID " + id + " not found"));
         return UserMapper.toUserResponseDTO(user);
     }
@@ -63,22 +63,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public List<UserResponseDTO> getAllUsers() {
-        List<User> users = userRepository.findAll();
-        return users.stream()
-                .map(UserMapper::toUserResponseDTO)
-                .collect(Collectors.toList());
+    public List<UserResponseDTO> getAllUsers(String username) {
+        return Collections.singletonList(getUserByUsername(username));
     }
 
     @Override
-    public UserResponseDTO updateUser(Long id, UserUpdateDTO userUpdateDTO) {
-        User existingUser = userRepository.findById(id)
+    public UserResponseDTO updateUser(Long id, UserUpdateDTO userUpdateDTO, String username) {
+        User existingUser = userRepository.findByIdAndUsername(id, username)
                 .orElseThrow(() -> new ResourceNotFoundException("User with ID " + id + " not found"));
 
         existingUser.setLevel(userUpdateDTO.getLevel());
         existingUser.setXp(userUpdateDTO.getXp());
-        existingUser.setProgress(userUpdateDTO.getProgress());
-        existingUser.setRoles(userUpdateDTO.getRoles());
 
         User updatedUser = userRepository.save(existingUser);
 
@@ -86,8 +81,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public void deleteUser(Long id) {
-        User existingUser = userRepository.findById(id)
+    public void deleteUser(Long id, String username) {
+        User existingUser = userRepository.findByIdAndUsername(id, username)
                 .orElseThrow(() -> new ResourceNotFoundException("User with ID " + id + " not found"));
         userRepository.delete(existingUser);
     }

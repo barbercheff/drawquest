@@ -44,8 +44,8 @@ public class DrawingController {
             }
     )
     @GetMapping
-    public ResponseEntity<List<DrawingResponseDTO>> getAllDrawings() {
-        return ResponseEntity.ok(drawingService.getAllDrawings());
+    public ResponseEntity<List<DrawingResponseDTO>> getAllDrawings(@AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(drawingService.getAllDrawings(userDetails.getUsername()));
     }
 
     @Operation(
@@ -57,8 +57,9 @@ public class DrawingController {
             }
     )
     @GetMapping("/{id}")
-    public ResponseEntity<DrawingResponseDTO> getDrawingById(@PathVariable Long id) {
-        return ResponseEntity.ok(drawingService.getDrawingById(id));
+    public ResponseEntity<DrawingResponseDTO> getDrawingById(@PathVariable Long id,
+                                                             @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(drawingService.getDrawingById(id, userDetails.getUsername()));
     }
 
     @Operation(
@@ -97,16 +98,18 @@ public class DrawingController {
                     description = "Drawing update data",
                     required = true,
                     content = @Content(schema = @Schema(implementation = DrawingUpdateDTO.class)))
-            @RequestBody DrawingUpdateDTO drawingUpdateDTO) {
-        return ResponseEntity.ok(drawingService.updateDrawing(id, drawingUpdateDTO));
+            @RequestBody DrawingUpdateDTO drawingUpdateDTO,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(drawingService.updateDrawing(id, drawingUpdateDTO, userDetails.getUsername()));
     }
 
     @Operation(summary = "Delete drawing", description = "Deletes a drawing by ID")
     @ApiResponse(responseCode = "204", description = "Drawing deleted successfully", content = @Content)
     @ApiResponse(responseCode = "404", description = "Drawing not found", content = @Content)
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteDrawing(@PathVariable Long id) {
-        drawingService.deleteDrawing(id);
+    public ResponseEntity<Void> deleteDrawing(@PathVariable Long id,
+                                              @AuthenticationPrincipal UserDetails userDetails) {
+        drawingService.deleteDrawing(id, userDetails.getUsername());
         return ResponseEntity.noContent().build();
     }
 }

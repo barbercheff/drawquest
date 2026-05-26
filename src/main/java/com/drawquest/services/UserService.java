@@ -8,12 +8,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.List;
 
 public interface UserService {
-    UserResponseDTO getUserById(Long id);
+    UserResponseDTO getUserById(Long id, String username);
     UserDetails loadUserByUsername(String username);
     UserResponseDTO getUserByUsername(String username);
     UserResponseDTO createUser(UserCreateDTO userCreateDTO);
-    List<UserResponseDTO> getAllUsers();
-    UserResponseDTO updateUser(Long id, UserUpdateDTO userUpdateDTO);
-    void deleteUser(Long id);
+    List<UserResponseDTO> getAllUsers(String username);
+    UserResponseDTO updateUser(Long id, UserUpdateDTO userUpdateDTO, String username);
+    void deleteUser(Long id, String username);
 }
 

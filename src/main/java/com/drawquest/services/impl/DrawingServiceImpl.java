@@ -33,8 +33,8 @@ public class DrawingServiceImpl implements DrawingService {
     }
 
     @Override
-    public DrawingResponseDTO getDrawingById(Long id) {
-        Drawing drawing = drawingRepository.findById(id)
+    public DrawingResponseDTO getDrawingById(Long id, String username) {
+        Drawing drawing = drawingRepository.findByIdAndUserUsername(id, username)
                 .orElseThrow(() -> new ResourceNotFoundException("Drawing with ID " + id + " not found"));
         return DrawingMapper.toDrawingResponseDTO(drawing);
     }
@@ -52,16 +52,16 @@ public class DrawingServiceImpl implements DrawingService {
     }
 
     @Override
-    public List<DrawingResponseDTO> getAllDrawings() {
-        List<Drawing> drawings = drawingRepository.findAll();
+    public List<DrawingResponseDTO> getAllDrawings(String username) {
+        List<Drawing> drawings = drawingRepository.findByUserUsername(username);
         return drawings.stream()
                 .map(DrawingMapper::toDrawingResponseDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public DrawingResponseDTO updateDrawing(Long id, DrawingUpdateDTO drawingUpdateDTO) {
-        Drawing existingDrawing = drawingRepository.findById(id)
+    public DrawingResponseDTO updateDrawing(Long id, DrawingUpdateDTO drawingUpdateDTO, String username) {
+        Drawing existingDrawing = drawingRepository.findByIdAndUserUsername(id, username)
                 .orElseThrow(() -> new ResourceNotFoundException("Drawing with ID " + id + " not found"));
 
         if (drawingUpdateDTO.getImageUrl() != null) {
@@ -78,8 +78,8 @@ public class DrawingServiceImpl implements DrawingService {
     }
 
     @Override
-    public void deleteDrawing(Long id) {
-        Drawing drawing = drawingRepository.findById(id)
+    public void deleteDrawing(Long id, String username) {
+        Drawing drawing = drawingRepository.findByIdAndUserUsername(id, username)
                 .orElseThrow(() -> new ResourceNotFoundException("Drawing with ID " + id + " not found"));
         drawingRepository.delete(drawing);
     }

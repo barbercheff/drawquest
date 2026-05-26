@@ -33,8 +33,8 @@ public class ProgressServiceImpl implements ProgressService {
     }
 
     @Override
-    public ProgressResponseDTO getProgressById(Long id) {
-        Progress progress = progressRepository.findById(id)
+    public ProgressResponseDTO getProgressById(Long id, String username) {
+        Progress progress = progressRepository.findByIdAndUserUsername(id, username)
                 .orElseThrow(() -> new ResourceNotFoundException("Progress with ID " + id + " not found"));
         return ProgressMapper.toProgressResponseDTO(progress);
     }
@@ -52,15 +52,15 @@ public class ProgressServiceImpl implements ProgressService {
     }
 
     @Override
-    public List<ProgressResponseDTO> getAllProgress() {
-        return progressRepository.findAll().stream()
+    public List<ProgressResponseDTO> getAllProgress(String username) {
+        return progressRepository.findByUserUsername(username).stream()
                 .map(ProgressMapper::toProgressResponseDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public ProgressResponseDTO updateProgress(Long id, ProgressUpdateDTO progressUpdateDTO) {
-        Progress existingProgress = progressRepository.findById(id)
+    public ProgressResponseDTO updateProgress(Long id, ProgressUpdateDTO progressUpdateDTO, String username) {
+        Progress existingProgress = progressRepository.findByIdAndUserUsername(id, username)
                 .orElseThrow(() -> new ResourceNotFoundException("Progress with ID " + id + " not found"));
 
         existingProgress.setAttempts(progressUpdateDTO.getAttempts());
@@ -70,8 +70,8 @@ public class ProgressServiceImpl implements ProgressService {
     }
 
     @Override
-    public void deleteProgress(Long id) {
-        Progress progress = progressRepository.findById(id)
+    public void deleteProgress(Long id, String username) {
+        Progress progress = progressRepository.findByIdAndUserUsername(id, username)
                 .orElseThrow(() -> new ResourceNotFoundException("Progress with ID " + id + " not found"));
         progressRepository.delete(progress);
     }

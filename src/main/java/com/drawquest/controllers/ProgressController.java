@@ -22,13 +22,14 @@ public class ProgressController {
     private ProgressService progressService;
 
     @GetMapping
-    public ResponseEntity<List<ProgressResponseDTO>> getAllProgress() {
-        return ResponseEntity.ok(progressService.getAllProgress());
+    public ResponseEntity<List<ProgressResponseDTO>> getAllProgress(@AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(progressService.getAllProgress(userDetails.getUsername()));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProgressResponseDTO> getProgressById(@PathVariable Long id) {
-        return ResponseEntity.ok(progressService.getProgressById(id));
+    public ResponseEntity<ProgressResponseDTO> getProgressById(@PathVariable Long id,
+                                                               @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(progressService.getProgressById(id, userDetails.getUsername()));
     }
 
     @PostMapping
@@ -39,13 +40,16 @@ public class ProgressController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProgressResponseDTO> updateProgress(@PathVariable Long id, @RequestBody ProgressUpdateDTO progressUpdateDTO) {
-        return ResponseEntity.ok(progressService.updateProgress(id, progressUpdateDTO));
+    public ResponseEntity<ProgressResponseDTO> updateProgress(@PathVariable Long id,
+                                                              @RequestBody ProgressUpdateDTO progressUpdateDTO,
+                                                              @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(progressService.updateProgress(id, progressUpdateDTO, userDetails.getUsername()));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProgress(@PathVariable Long id) {
-        progressService.deleteProgress(id);
+    public ResponseEntity<Void> deleteProgress(@PathVariable Long id,
+                                               @AuthenticationPrincipal UserDetails userDetails) {
+        progressService.deleteProgress(id, userDetails.getUsername());
         return ResponseEntity.noContent().build();
     }
 }
