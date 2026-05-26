@@ -36,11 +36,19 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Operation(summary = "Get all users", description = "Returns all registered users. Requires ROLE_ADMIN.")
+    @ApiResponse(responseCode = "200", description = "List retrieved successfully")
+    @ApiResponse(responseCode = "403", description = "Admin role required", content = @Content)
+    @GetMapping
+    public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
+    }
+
     @Operation(summary = "Get current user", description = "Returns the authenticated user")
     @ApiResponse(responseCode = "200", description = "User retrieved successfully")
-    @GetMapping
-    public ResponseEntity<List<UserResponseDTO>> getAllUsers(@AuthenticationPrincipal UserDetails userDetails) {
-        return ResponseEntity.ok(userService.getAllUsers(userDetails.getUsername()));
+    @GetMapping("/me")
+    public ResponseEntity<UserResponseDTO> getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(userService.getUserByUsername(userDetails.getUsername()));
     }
 
     @Operation(summary = "Get user by ID", description = "Returns a specific user")

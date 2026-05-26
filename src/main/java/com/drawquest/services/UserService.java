@@ -12,7 +12,7 @@ public interface UserService {
     UserDetails loadUserByUsername(String username);
     UserResponseDTO getUserByUsername(String username);
     UserResponseDTO createUser(UserCreateDTO userCreateDTO);
-    List<UserResponseDTO> getAllUsers(String username);
+    List<UserResponseDTO> getAllUsers();
     UserResponseDTO updateUser(Long id, UserUpdateDTO userUpdateDTO, String username);
     void deleteUser(Long id, String username);
 }
