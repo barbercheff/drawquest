@@ -1,6 +1,7 @@
 package com.drawquest;
 
 import com.drawquest.enums.ERole;
+import com.drawquest.models.Drawing;
 import com.drawquest.models.Progress;
 import com.drawquest.models.Quest;
 import com.drawquest.models.Role;
@@ -140,6 +141,125 @@ class DrawquestIntegrationTest {
     }
 
     @Test
+    void moderatorCanCreateAndUpdateQuestsButCannotDeleteThem() throws Exception {
+        User moderator = createUser("moderator", "secret123", "moderator@example.com", ERole.ROLE_MODERATOR);
+        String moderatorToken = tokenFor(moderator, "secret123");
+
+        String createResponse = mockMvc.perform(post("/quests")
+                        .header("Authorization", bearer(moderatorToken))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(validQuestJson("Draw a lantern", 40)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.title").value("Draw a lantern"))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        Long questId = objectMapper.readTree(createResponse).get("id").asLong();
+
+        mockMvc.perform(put("/quests/{id}", questId)
+                        .header("Authorization", bearer(moderatorToken))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(validQuestJson("Draw a bright lantern", 55)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("Draw a bright lantern"))
+                .andExpect(jsonPath("$.xpReward").value(55));
+
+        mockMvc.perform(delete("/quests/{id}", questId)
+                        .header("Authorization", bearer(moderatorToken)))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void adminCanDeleteQuests() throws Exception {
+        User admin = createUser("quest_admin", "secret123", "quest_admin@example.com", ERole.ROLE_ADMIN);
+        Quest quest = createQuest("Draw a mountain", 75);
+        String adminToken = tokenFor(admin, "secret123");
+
+        mockMvc.perform(delete("/quests/{id}", quest.getId())
+                        .header("Authorization", bearer(adminToken)))
+                .andExpect(status().isNoContent());
+
+        assertThat(questRepository.findById(quest.getId())).isEmpty();
+    }
+
+    @Test
+    void invalidQuestAndDrawingPayloadsReturnBadRequest() throws Exception {
+        User admin = createUser("validation_admin", "secret123", "validation_admin@example.com", ERole.ROLE_ADMIN);
+        User user = createUser("validation_user", "secret123", "validation_user@example.com", ERole.ROLE_USER);
+        String adminToken = tokenFor(admin, "secret123");
+        String userToken = tokenFor(user, "secret123");
+
+        mockMvc.perform(post("/quests")
+                        .header("Authorization", bearer(adminToken))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "title": "",
+                                  "description": "Invalid quest",
+                                  "difficulty": 0,
+                                  "xpReward": -1
+                                }
+                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorCode").value("VALIDATION_ERROR"));
+
+        mockMvc.perform(post("/drawings")
+                        .header("Authorization", bearer(userToken))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "questId": 1,
+                                  "imageUrl": "not-a-url"
+                                }
+                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorCode").value("VALIDATION_ERROR"));
+    }
+
+    @Test
+    void usersCanOnlyAccessTheirOwnDrawingsAndProgress() throws Exception {
+        User owner = createUser("owner", "secret123", "owner@example.com", ERole.ROLE_USER);
+        User other = createUser("other", "secret123", "other@example.com", ERole.ROLE_USER);
+        Quest quest = createQuest("Draw a tree", 30);
+        Drawing ownerDrawing = createDrawing(owner, quest, "https://example.com/owner-tree.png");
+        Drawing otherDrawing = createDrawing(other, quest, "https://example.com/other-tree.png");
+        Progress ownerProgress = createProgress(owner, quest, 2);
+        Progress otherProgress = createProgress(other, quest, 1);
+        String ownerToken = tokenFor(owner, "secret123");
+
+        mockMvc.perform(get("/drawings")
+                        .header("Authorization", bearer(ownerToken)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].id").value(ownerDrawing.getId()));
+
+        mockMvc.perform(get("/drawings/{id}", otherDrawing.getId())
+                        .header("Authorization", bearer(ownerToken)))
+                .andExpect(status().isNotFound());
+
+        mockMvc.perform(put("/drawings/{id}", otherDrawing.getId())
+                        .header("Authorization", bearer(ownerToken))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "imageUrl": "https://example.com/stolen-update.png"
+                                }
+                                """))
+                .andExpect(status().isNotFound());
+
+        mockMvc.perform(get("/progress")
+                        .header("Authorization", bearer(ownerToken)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].id").value(ownerProgress.getId()));
+
+        mockMvc.perform(get("/progress/{id}", otherProgress.getId())
+                        .header("Authorization", bearer(ownerToken)))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     void approvingDrawingCompletesProgressAndAwardsXpOnlyOnce() throws Exception {
         User user = createUser("carol", "secret123", "carol@example.com", ERole.ROLE_USER);
         User admin = createUser("admin", "secret123", "admin@example.com", ERole.ROLE_ADMIN);
@@ -203,6 +323,26 @@ class DrawquestIntegrationTest {
         quest.setXpReward(xpReward);
 
         return questRepository.save(quest);
+    }
+
+    private Drawing createDrawing(User user, Quest quest, String imageUrl) {
+        Drawing drawing = new Drawing();
+        drawing.setUser(user);
+        drawing.setQuest(quest);
+        drawing.setImageUrl(imageUrl);
+        drawing.setApproved(false);
+
+        return drawingRepository.save(drawing);
+    }
+
+    private Progress createProgress(User user, Quest quest, int attempts) {
+        Progress progress = new Progress();
+        progress.setUser(user);
+        progress.setQuest(quest);
+        progress.setAttempts(attempts);
+        progress.setCompleted(false);
+
+        return progressRepository.save(progress);
     }
 
     private String tokenFor(User user, String password) throws Exception {

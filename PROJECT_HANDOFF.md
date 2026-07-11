@@ -29,6 +29,24 @@ Resultado observado: `BUILD SUCCESS`, 3 tests ejecutados.
 
 Handoff movido al repo real (`drawquest/PROJECT_HANDOFF.md`) y commiteado. El repo Git accidental de la carpeta padre `drawquest app` se desactivo renombrando su `.git` a `.git.disabled-parent-repo`; el repo activo debe seguir siendo siempre `drawquest`.
 
+Arranque real con MySQL validado el 2026-07-11:
+
+- Servicio MySQL local `MySQL80` en ejecucion.
+- Backend arrancado con `DRAWQUEST_DB_USERNAME=drawquest_admin` y password local configurada.
+- `http://localhost:8080/swagger-ui.html` responde `200`.
+- `http://localhost:8080/api-docs` responde `200`.
+- Registro y login reales contra MySQL verificados con usuario temporal `startup_test_*`; login devolvio JWT.
+
+Tests de autorizacion/validacion ampliados el 2026-07-11:
+
+- Moderator puede crear y editar quests.
+- Moderator no puede borrar quests.
+- Admin puede borrar quests.
+- Payloads invalidos de quests y drawings devuelven `400 VALIDATION_ERROR`.
+- Usuarios solo pueden listar/ver/editar sus propios dibujos.
+- Usuarios solo pueden listar/ver su propio progreso.
+- Suite verificada con `.\mvnw.cmd test`: `BUILD SUCCESS`, 7 tests ejecutados.
+
 ## Contexto general
 
 Proyecto ubicado en:
@@ -237,10 +255,8 @@ Pendiente decidir:
 
 Nota 2026-07-11: los puntos 1 a 6 de la lista anterior ya estan completados. Tambien se movio y commiteo este handoff dentro del repo real, y se desactivo el repo Git accidental de la carpeta padre. La lista activa es:
 
-1. Ampliar tests de autorizacion/validacion para casos positivos y negativos restantes.
-2. Probar arranque real con MySQL y variables de entorno.
-3. Documentar ejemplos practicos de API.
-4. Decidir siguiente bloque funcional: subida real de imagenes o frontend.
+1. Documentar ejemplos practicos de API.
+2. Decidir siguiente bloque funcional: subida real de imagenes o frontend.
 
 Compilar/testear:
 
