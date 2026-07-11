@@ -27,6 +27,8 @@ cd "C:\Users\victor\Desktop\PROGRAMACIÓN\APPS\drawquest app\drawquest"
 
 Resultado observado: `BUILD SUCCESS`, 3 tests ejecutados.
 
+Handoff movido al repo real (`drawquest/PROJECT_HANDOFF.md`) y commiteado. El repo Git accidental de la carpeta padre `drawquest app` se desactivo renombrando su `.git` a `.git.disabled-parent-repo`; el repo activo debe seguir siendo siempre `drawquest`.
+
 ## Contexto general
 
 Proyecto ubicado en:
@@ -233,13 +235,12 @@ Pendiente decidir:
 
 ## Comandos utiles
 
-Nota 2026-07-11: los puntos 1 a 6 de la lista anterior ya estan completados. La lista activa es:
+Nota 2026-07-11: los puntos 1 a 6 de la lista anterior ya estan completados. Tambien se movio y commiteo este handoff dentro del repo real, y se desactivo el repo Git accidental de la carpeta padre. La lista activa es:
 
 1. Ampliar tests de autorizacion/validacion para casos positivos y negativos restantes.
 2. Probar arranque real con MySQL y variables de entorno.
-3. Revisar estructura Git del repo raiz y `drawquest.zip`.
-4. Documentar ejemplos practicos de API.
-5. Decidir siguiente bloque funcional: subida real de imagenes o frontend.
+3. Documentar ejemplos practicos de API.
+4. Decidir siguiente bloque funcional: subida real de imagenes o frontend.
 
 Compilar/testear:
 
