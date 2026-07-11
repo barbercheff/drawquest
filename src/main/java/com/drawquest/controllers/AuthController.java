@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,12 +28,9 @@ public class AuthController {
 
     private final AuthService authService;
 
-    private final PasswordEncoder passwordEncoder;
-
-    public AuthController(UserService userService, AuthService authService, PasswordEncoder passwordEncoder) {
+    public AuthController(UserService userService, AuthService authService) {
         this.userService = userService;
         this.authService = authService;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping("/register")
@@ -46,7 +42,6 @@ public class AuthController {
                     content = @Content(schema = @Schema(implementation = UserCreateDTO.class)))
             @org.springframework.web.bind.annotation.RequestBody UserCreateDTO userCreateDTO) {
 
-        userCreateDTO.setPassword(passwordEncoder.encode(userCreateDTO.getPassword()));
         return ResponseEntity.ok(userService.createUser(userCreateDTO));
     }
 

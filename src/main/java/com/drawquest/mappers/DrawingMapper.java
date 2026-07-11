@@ -21,8 +21,8 @@ public class DrawingMapper {
                 drawing.getQuest().getId(),
                 drawing.getImageUrl(),
                 drawing.isApproved(),
-                drawing.getModifiedAt(),
-                drawing.getCreatedAt()
+                drawing.getCreatedAt(),
+                drawing.getModifiedAt()
 
         );
     }

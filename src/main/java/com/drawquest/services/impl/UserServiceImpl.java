@@ -16,6 +16,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,9 +29,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     private final RoleRepository roleRepository;
 
-    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository) {
+    private final PasswordEncoder passwordEncoder;
+
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -50,6 +54,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public UserResponseDTO createUser(UserCreateDTO userCreateDTO) {
         User newUser = UserMapper.toUserEntity(userCreateDTO);
+        newUser.setPassword(passwordEncoder.encode(userCreateDTO.getPassword()));
         Role defaultRole = roleRepository.findByName(ERole.ROLE_USER)
                 .orElseThrow(() -> new ResourceNotFoundException("Default user role not found"));
         newUser.getRoles().add(defaultRole);

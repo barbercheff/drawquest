@@ -4,6 +4,7 @@ import com.drawquest.dtos.QuestCreateDTO;
 import com.drawquest.dtos.QuestResponseDTO;
 import com.drawquest.dtos.QuestUpdateDTO;
 import com.drawquest.services.QuestService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,12 +32,12 @@ public class QuestController {
     }
 
     @PostMapping
-    public ResponseEntity<QuestResponseDTO> createQuest(@RequestBody QuestCreateDTO questCreateDTO) {
+    public ResponseEntity<QuestResponseDTO> createQuest(@Valid @RequestBody QuestCreateDTO questCreateDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(questService.createQuest(questCreateDTO));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<QuestResponseDTO> updateQuest(@PathVariable Long id, @RequestBody QuestUpdateDTO questUpdateDTO) {
+    public ResponseEntity<QuestResponseDTO> updateQuest(@PathVariable Long id, @Valid @RequestBody QuestUpdateDTO questUpdateDTO) {
         return ResponseEntity.ok(questService.updateQuest(id, questUpdateDTO));
     }
 
