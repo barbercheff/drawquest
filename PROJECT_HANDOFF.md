@@ -47,6 +47,12 @@ Tests de autorizacion/validacion ampliados el 2026-07-11:
 - Usuarios solo pueden listar/ver su propio progreso.
 - Suite verificada con `.\mvnw.cmd test`: `BUILD SUCCESS`, 7 tests ejecutados.
 
+Documentacion practica de API anadida:
+
+- Nuevo archivo `API_EXAMPLES.md`.
+- Incluye ejemplos PowerShell para register/login, JWT, users, quests, drawings y progress.
+- Incluye notas de permisos por rol y setup SQL local para asignar `ROLE_ADMIN` o `ROLE_MODERATOR`.
+
 ## Contexto general
 
 Proyecto ubicado en:
@@ -255,8 +261,7 @@ Pendiente decidir:
 
 Nota 2026-07-11: los puntos 1 a 6 de la lista anterior ya estan completados. Tambien se movio y commiteo este handoff dentro del repo real, y se desactivo el repo Git accidental de la carpeta padre. La lista activa es:
 
-1. Documentar ejemplos practicos de API.
-2. Decidir siguiente bloque funcional: subida real de imagenes o frontend.
+1. Decidir siguiente bloque funcional: subida real de imagenes o frontend.
 
 Compilar/testear:
 
