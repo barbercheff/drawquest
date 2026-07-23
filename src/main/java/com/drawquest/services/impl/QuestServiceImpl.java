@@ -8,6 +8,8 @@ import com.drawquest.mappers.QuestMapper;
 import com.drawquest.models.Quest;
 import com.drawquest.repositories.QuestRepository;
 import com.drawquest.services.QuestService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +17,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class QuestServiceImpl implements QuestService {
+
+    private static final Logger logger = LoggerFactory.getLogger(QuestServiceImpl.class);
 
     private final QuestRepository questRepository;
 
@@ -33,7 +37,10 @@ public class QuestServiceImpl implements QuestService {
     @Override
     public QuestResponseDTO createQuest(QuestCreateDTO questCreateDTO) {
         Quest newQuest = QuestMapper.toQuestEntity(questCreateDTO);
-        return QuestMapper.toQuestResponseDTO(questRepository.save(newQuest));
+        Quest savedQuest = questRepository.save(newQuest);
+        logger.info("Created quest id={} title={} difficulty={} xpReward={}",
+                savedQuest.getId(), savedQuest.getTitle(), savedQuest.getDifficulty(), savedQuest.getXpReward());
+        return QuestMapper.toQuestResponseDTO(savedQuest);
     }
 
     @Override
@@ -54,7 +61,10 @@ public class QuestServiceImpl implements QuestService {
         existingQuest.setDifficulty(questUpdateDTO.getDifficulty());
         existingQuest.setXpReward(questUpdateDTO.getXpReward());
 
-        return QuestMapper.toQuestResponseDTO(questRepository.save(existingQuest));
+        Quest savedQuest = questRepository.save(existingQuest);
+        logger.info("Updated quest id={} title={} difficulty={} xpReward={}",
+                savedQuest.getId(), savedQuest.getTitle(), savedQuest.getDifficulty(), savedQuest.getXpReward());
+        return QuestMapper.toQuestResponseDTO(savedQuest);
     }
 
     @Override
@@ -62,6 +72,7 @@ public class QuestServiceImpl implements QuestService {
         Quest existingQuest = questRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Quest with ID " + id + " not found"));
         questRepository.delete(existingQuest);
+        logger.info("Deleted quest id={} title={}", existingQuest.getId(), existingQuest.getTitle());
     }
 }
 

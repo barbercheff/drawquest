@@ -27,6 +27,7 @@ Backend base implementado y con tests de integracion:
 - Swagger disponible en `/swagger-ui.html`.
 - Ejemplos practicos de API en `API_EXAMPLES.md`.
 - Migraciones de base de datos versionadas con Flyway en `src/main/resources/db/migration`.
+- Logging basico de eventos de negocio con SLF4J/Logback.
 
 ## Stack
 
@@ -135,6 +136,22 @@ Las llamadas protegidas requieren:
 
 ```text
 Authorization: Bearer <token>
+```
+
+## Logging
+
+La aplicacion registra eventos de negocio relevantes sin incluir passwords, JWT ni payloads completos:
+
+- login correcto o fallido;
+- creacion y borrado de usuarios;
+- creacion, actualizacion y borrado de quests;
+- creacion, actualizacion, borrado y aprobacion de dibujos;
+- errores inesperados.
+
+Nivel configurable:
+
+```properties
+DRAWQUEST_LOG_LEVEL=INFO
 ```
 
 ## Estructura

@@ -71,6 +71,13 @@ Actualizacion conservadora de dependencias aplicada el 2026-07-23:
 - Eliminada la version explicita de `mysql-connector-j` para usar la version gestionada por el BOM de Spring Boot.
 - Suite verificada con `.\mvnw.cmd test`: `BUILD SUCCESS`, 7 tests ejecutados.
 
+Logging basico anadido el 2026-07-24:
+
+- Anadidos logs con SLF4J/Logback en autenticacion, usuarios, quests, dibujos y errores inesperados.
+- Evitados passwords, JWT y payloads completos en logs.
+- Anadida configuracion `logging.level.com.drawquest=${DRAWQUEST_LOG_LEVEL:INFO}`.
+- Suite verificada con `.\mvnw.cmd test`: `BUILD SUCCESS`, 7 tests ejecutados.
+
 ## Contexto general
 
 Proyecto ubicado en:

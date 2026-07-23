@@ -13,6 +13,8 @@ import com.drawquest.repositories.UserRepository;
 import com.drawquest.services.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,6 +26,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService, UserDetailsService {
+
+    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private final UserRepository userRepository;
 
@@ -60,8 +64,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         newUser.getRoles().add(defaultRole);
 
         try {
-            return UserMapper.toUserResponseDTO(userRepository.save(newUser));
+            User savedUser = userRepository.save(newUser);
+            logger.info("Created user id={} username={} defaultRole={}", savedUser.getId(), savedUser.getUsername(), ERole.ROLE_USER);
+            return UserMapper.toUserResponseDTO(savedUser);
         } catch (DataIntegrityViolationException e) {
+            logger.warn("User creation failed because username or email is already in use. username={}", userCreateDTO.getUsername());
             throw new DuplicateResourceException("Username or email is already in use.");
         }
     }
@@ -79,6 +86,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         User existingUser = userRepository.findByIdAndUsername(id, username)
                 .orElseThrow(() -> new ResourceNotFoundException("User with ID " + id + " not found"));
         userRepository.delete(existingUser);
+        logger.info("Deleted user id={} username={}", existingUser.getId(), existingUser.getUsername());
     }
 
     @Override

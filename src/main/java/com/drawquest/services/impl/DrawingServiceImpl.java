@@ -15,6 +15,8 @@ import com.drawquest.repositories.QuestRepository;
 import com.drawquest.repositories.UserRepository;
 import com.drawquest.services.DrawingService;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,6 +25,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class DrawingServiceImpl implements DrawingService {
+
+    private static final Logger logger = LoggerFactory.getLogger(DrawingServiceImpl.class);
 
     private final DrawingRepository drawingRepository;
 
@@ -62,7 +66,10 @@ public class DrawingServiceImpl implements DrawingService {
         progressRepository.save(progress);
 
         Drawing drawing = DrawingMapper.toDrawingEntity(drawingCreateDTO, user, quest);
-        return DrawingMapper.toDrawingResponseDTO(drawingRepository.save(drawing));
+        Drawing savedDrawing = drawingRepository.save(drawing);
+        logger.info("Created drawing id={} userId={} questId={} attempts={}",
+                savedDrawing.getId(), user.getId(), quest.getId(), progress.getAttempts());
+        return DrawingMapper.toDrawingResponseDTO(savedDrawing);
     }
 
     @Override
@@ -84,7 +91,9 @@ public class DrawingServiceImpl implements DrawingService {
 
         existingDrawing.setModifiedAt(LocalDateTime.now());
 
-        return DrawingMapper.toDrawingResponseDTO(drawingRepository.save(existingDrawing));
+        Drawing savedDrawing = drawingRepository.save(existingDrawing);
+        logger.info("Updated drawing id={} username={}", savedDrawing.getId(), username);
+        return DrawingMapper.toDrawingResponseDTO(savedDrawing);
     }
 
     @Override
@@ -108,6 +117,11 @@ public class DrawingServiceImpl implements DrawingService {
 
             userRepository.save(user);
             progressRepository.save(progress);
+            logger.info("Approved drawing id={} userId={} questId={} xpAwarded={} totalXp={} level={}",
+                    drawing.getId(), user.getId(), drawing.getQuest().getId(),
+                    drawing.getQuest().getXpReward(), user.getXp(), user.getLevel());
+        } else {
+            logger.info("Approved drawing id={} without awarding XP because progress was already completed", drawing.getId());
         }
 
         return DrawingMapper.toDrawingResponseDTO(drawingRepository.save(drawing));
@@ -118,6 +132,7 @@ public class DrawingServiceImpl implements DrawingService {
         Drawing drawing = drawingRepository.findByIdAndUserUsername(id, username)
                 .orElseThrow(() -> new ResourceNotFoundException("Drawing with ID " + id + " not found"));
         drawingRepository.delete(drawing);
+        logger.info("Deleted drawing id={} username={}", drawing.getId(), username);
     }
 
     private Progress createProgress(User user, Quest quest) {
