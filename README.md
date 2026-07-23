@@ -1,51 +1,55 @@
-# DrawQuest - Proyecto Backend
+# DrawQuest
 
-**DrawQuest** es una aplicación web que permite a los usuarios participar en misiones de dibujo con una progresión a través de diferentes niveles. Los usuarios pueden completar misiones, enviar sus dibujos y seguir su avance en el juego.
+DrawQuest es una aplicacion de misiones de dibujo. Los usuarios se registran, inician sesion, completan quests subiendo dibujos y progresan con XP y niveles cuando sus dibujos son aprobados.
 
----
+El proyecto esta en desarrollo. El trabajo actual esta centrado en el backend Java/Spring Boot; cuando esta base quede cerrada, el siguiente objetivo sera construir el frontend y completar la aplicacion.
 
-## Características Principales
+Estado de referencia: 2026-07-23.
 
-- **Usuarios**: Los usuarios pueden registrarse, iniciar sesión y ver su progreso.
-- **Misiones**: El sistema ofrece misiones de dibujo con diferentes niveles de dificultad.
-- **Progreso**: Los usuarios pueden ver su progreso y completar misiones.
-- **Dibujos**: Los usuarios pueden subir sus dibujos como parte de las misiones completadas.
-- **Seguridad**: Implementación de seguridad con JWT (JSON Web Tokens) para el manejo de autenticación.
+## Estado Actual
 
----
+Backend base implementado y con tests de integracion:
 
-## Tecnologías Utilizadas
+- Registro y login con JWT.
+- Passwords guardadas con BCrypt desde `UserServiceImpl.createUser`.
+- Registro publico con rol por defecto `ROLE_USER`.
+- Endpoints protegidos con Spring Security y filtro JWT.
+- `GET /users` y `POST /users` restringidos a `ROLE_ADMIN`.
+- CRUD de quests restringido por rol:
+  - `GET /quests/**`: usuario autenticado.
+  - `POST /quests`: `ROLE_ADMIN` o `ROLE_MODERATOR`.
+  - `PUT /quests/{id}`: `ROLE_ADMIN` o `ROLE_MODERATOR`.
+  - `DELETE /quests/{id}`: `ROLE_ADMIN`.
+- Aprobacion de dibujos restringida a `ROLE_ADMIN` o `ROLE_MODERATOR`.
+- Usuarios solo pueden consultar/modificar sus propios dibujos.
+- Usuarios solo pueden consultar su propio progreso.
+- Validacion con `@Valid` en payloads principales.
+- Swagger disponible en `/swagger-ui.html`.
+- Ejemplos practicos de API en `API_EXAMPLES.md`.
 
-- **Spring Boot**: Framework para el backend.
-- **Spring Security**: Gestión de seguridad y autenticación de usuarios.
-- **JWT (JSON Web Tokens)**: Autenticación basada en tokens.
-- **JPA (Java Persistence API)**: Persistencia y acceso a base de datos.
-- **MySQL**: Base de datos configurada por defecto para desarrollo local.
-- **H2**: Dependencia disponible para desarrollo o pruebas en memoria.
-- **Maven**: Herramienta de gestión y construcción de proyectos.
+## Stack
 
----
+- Java 17
+- Spring Boot 3.4.2
+- Maven wrapper incluido (`mvnw` / `mvnw.cmd`)
+- Spring Web
+- Spring Security
+- Spring Data JPA
+- JWT con `jjwt`
+- MySQL para desarrollo local
+- H2 para tests
+- Lombok
+- Swagger/OpenAPI con springdoc
 
 ## Requisitos
 
-- **Java 17** o superior.
-- **Maven** o el wrapper incluido (`mvnw` / `mvnw.cmd`).
-- **MySQL** con una base de datos local para DrawQuest.
+- Java 17 o superior.
+- Maven o el wrapper incluido.
+- MySQL local para ejecutar la app contra base de datos real.
 
----
+## Configuracion
 
-## Configuración del Proyecto
-
-### 1. Clonar el Repositorio
-
-```bash
-git clone https://github.com/tu_usuario/drawquest.git
-cd drawquest
-```
-
-### 2. Configurar Variables de Entorno
-
-La aplicación lee la configuración sensible desde variables de entorno:
+La aplicacion lee configuracion sensible desde variables de entorno:
 
 ```properties
 DRAWQUEST_DB_URL=jdbc:mysql://localhost:3306/drawquest_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
@@ -57,84 +61,114 @@ DRAWQUEST_JWT_EXPIRATION_MS=3600000
 
 `DRAWQUEST_JWT_SECRET` debe estar en Base64 y tener al menos 256 bits para HS256.
 
-### 3. Compilar y Ejecutar el Proyecto
+## Ejecutar
 
 En Windows:
 
-```bash
-.\mvnw.cmd clean install
+```powershell
 .\mvnw.cmd spring-boot:run
 ```
 
 En macOS/Linux:
 
 ```bash
-./mvnw clean install
 ./mvnw spring-boot:run
 ```
 
-La aplicación se levantará en el puerto **8080** por defecto.
+La aplicacion se levanta en el puerto `8080` por defecto.
 
----
-
-## Estructura del Proyecto
+Swagger:
 
 ```text
-src/main/java/com/drawquest/
-├── controllers/      # Controladores REST
-├── services/         # Lógica de negocio
-├── repositories/     # Repositorios JPA
-├── models/           # Entidades del modelo
-├── dtos/             # Objetos de entrada y salida
-├── mappers/          # Conversión entre entidades y DTOs
-├── security/         # Configuración JWT y filtros de seguridad
-└── DrawquestApplication.java
+http://localhost:8080/swagger-ui.html
 ```
 
----
+## Tests
 
-## Autenticación y Seguridad
+Ejecutar suite:
 
-La aplicación utiliza **JWT (JSON Web Tokens)** para manejar la autenticación de los usuarios.
+```powershell
+.\mvnw.cmd test
+```
 
-1. **Registro de usuario**: Los usuarios se registran enviando un `POST` a `/auth/register`.
-2. **Login**: Los usuarios inician sesión enviando un `POST` a `/auth/login` con su usuario y contraseña. Si la autenticación es exitosa, reciben un JWT.
-3. **Autenticación con JWT**: Las solicitudes protegidas requieren el token JWT en el encabezado `Authorization` con el formato `Bearer token`.
+La suite actual esta en `src/test/java/com/drawquest/DrawquestIntegrationTest.java` y cubre:
 
----
+- Registro guarda password hasheada.
+- Login devuelve JWT.
+- Usuarios normales no pueden listar usuarios, aprobar dibujos ni mutar quests.
+- Moderadores pueden crear/editar quests, pero no borrarlas.
+- Admin puede borrar quests.
+- Payloads invalidos devuelven `400 VALIDATION_ERROR`.
+- Usuarios solo acceden a sus propios dibujos y progreso.
+- Aprobar un dibujo completa progreso y suma XP una sola vez.
+
+Ultima comprobacion local observada: 7 tests, 0 fallos, 0 errores.
 
 ## Rutas API
 
-| Método | Ruta              | Descripción                     |
-|--------|-------------------|---------------------------------|
-| POST   | `/auth/register`  | Registro de nuevo usuario       |
-| POST   | `/auth/login`     | Login y obtención del JWT       |
-| GET    | `/quests`         | Listar todas las misiones       |
-| GET    | `/quests/{id}`    | Ver detalles de una misión      |
-| POST   | `/drawings`       | Subir un dibujo                 |
-| GET    | `/progress`       | Ver el progreso de las misiones |
-| POST   | `/progress`       | Crear progreso                  |
+| Metodo | Ruta                    | Permiso                       | Descripcion |
+|--------|-------------------------|-------------------------------|-------------|
+| POST   | `/auth/register`        | Publico                       | Registra usuario con `ROLE_USER` |
+| POST   | `/auth/login`           | Publico                       | Devuelve JWT |
+| GET    | `/users`                | `ROLE_ADMIN`                  | Lista usuarios |
+| GET    | `/users/me`             | Autenticado                   | Devuelve usuario actual |
+| GET    | `/users/{id}`           | Propio usuario                | Devuelve usuario por ID |
+| POST   | `/users`                | `ROLE_ADMIN`                  | Crea usuario |
+| DELETE | `/users/{id}`           | Propio usuario                | Borra usuario |
+| GET    | `/quests`               | Autenticado                   | Lista quests |
+| GET    | `/quests/{id}`          | Autenticado                   | Devuelve quest |
+| POST   | `/quests`               | `ROLE_ADMIN`/`ROLE_MODERATOR` | Crea quest |
+| PUT    | `/quests/{id}`          | `ROLE_ADMIN`/`ROLE_MODERATOR` | Actualiza quest |
+| DELETE | `/quests/{id}`          | `ROLE_ADMIN`                  | Borra quest |
+| GET    | `/drawings`             | Autenticado, propios          | Lista dibujos propios |
+| GET    | `/drawings/{id}`        | Autenticado, propio           | Devuelve dibujo propio |
+| POST   | `/drawings`             | Autenticado                   | Crea dibujo para una quest |
+| PUT    | `/drawings/{id}`        | Autenticado, propio           | Actualiza dibujo propio |
+| PUT    | `/drawings/{id}/approve`| `ROLE_ADMIN`/`ROLE_MODERATOR` | Aprueba dibujo y otorga XP |
+| DELETE | `/drawings/{id}`        | Autenticado, propio           | Borra dibujo propio |
+| GET    | `/progress`             | Autenticado, propio           | Lista progreso propio |
+| GET    | `/progress/{id}`        | Autenticado, propio           | Devuelve progreso propio |
 
----
+Las llamadas protegidas requieren:
 
-## Notas de Desarrollo
+```text
+Authorization: Bearer <token>
+```
 
-- La autenticación se maneja con **Spring Security** y **JWT**.
-- La documentación Swagger está disponible en `/swagger-ui.html`.
-- La inicialización SQL usa `src/main/resources/schema.sql`.
-- La aplicación está diseñada para ampliarse con nuevas misiones, progreso y roles.
+## Estructura
 
----
+```text
+src/main/java/com/drawquest/
+|-- controllers/      # Controladores REST
+|-- services/         # Logica de negocio
+|-- repositories/     # Repositorios JPA
+|-- models/           # Entidades
+|-- dtos/             # DTOs de entrada/salida
+|-- mappers/          # Conversion entidad/DTO
+|-- security/         # JWT y filtro de autenticacion
+|-- config/           # Configuracion Spring/Security
+`-- DrawquestApplication.java
+```
 
-## Próximos Pasos
+## Documentacion Practica
 
-1. Corregir la validación de contraseña en el login.
-2. Asignar un rol por defecto al registrar usuarios.
-3. Tomar el usuario autenticado desde el JWT en endpoints protegidos.
-4. Añadir tests de autenticación, validaciones y endpoints protegidos.
+Para ejemplos PowerShell de registro, login, JWT, quests, drawings, progress y asignacion local de roles, ver:
 
----
+```text
+API_EXAMPLES.md
+```
+
+## Proximos Pasos
+
+La base de backend indicada en el handoff ya esta completada. El siguiente bloque funcional pendiente es decidir entre:
+
+1. Subida real de imagenes para dibujos.
+2. Frontend para consumir el backend.
+
+## Notas del Workspace
+
+El repo Git activo esta dentro de la carpeta `drawquest`. La carpeta padre tenia un repo accidental que fue desactivado como `.git.disabled-parent-repo`.
 
 ## Colaboradores
 
-- **barbercheff** - Desarrollador principal
+- barbercheff - Desarrollador principal
