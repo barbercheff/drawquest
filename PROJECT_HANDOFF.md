@@ -62,6 +62,15 @@ Migraciones Flyway anadidas el 2026-07-23:
 - Mantenido `spring.jpa.hibernate.ddl-auto=validate` para validar el esquema creado por Flyway.
 - Desactivado Flyway en `DrawquestIntegrationTest`, que sigue usando H2 con `ddl-auto=create-drop`.
 
+Actualizacion conservadora de dependencias aplicada el 2026-07-23:
+
+- Spring Boot actualizado de `3.4.2` a `3.5.16`.
+- Springdoc actualizado de `2.8.0` a `2.8.17`, compatible con Spring Boot 3.5.x.
+- JJWT actualizado de `0.12.6` a `0.13.0`.
+- Lombok actualizado de `1.18.34` a `1.18.46`.
+- Eliminada la version explicita de `mysql-connector-j` para usar la version gestionada por el BOM de Spring Boot.
+- Suite verificada con `.\mvnw.cmd test`: `BUILD SUCCESS`, 7 tests ejecutados.
+
 ## Contexto general
 
 Proyecto ubicado en:
@@ -77,7 +86,7 @@ Es un backend Java/Spring Boot para una app llamada DrawQuest. La idea es que us
 ## Stack detectado
 
 - Java 17
-- Spring Boot 3.4.2
+- Spring Boot 3.5.16
 - Maven wrapper incluido (`mvnw.cmd`)
 - Spring Web
 - Spring Security

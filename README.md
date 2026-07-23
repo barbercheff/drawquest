@@ -31,7 +31,7 @@ Backend base implementado y con tests de integracion:
 ## Stack
 
 - Java 17
-- Spring Boot 3.4.2
+- Spring Boot 3.5.16
 - Maven wrapper incluido (`mvnw` / `mvnw.cmd`)
 - Spring Web
 - Spring Security
