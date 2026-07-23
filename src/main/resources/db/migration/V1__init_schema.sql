@@ -1,4 +1,4 @@
--- Create users table if it does not exist.
+-- Initial DrawQuest schema.
 CREATE TABLE IF NOT EXISTS users (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(255) NOT NULL UNIQUE,
@@ -8,13 +8,11 @@ CREATE TABLE IF NOT EXISTS users (
     xp INT NOT NULL DEFAULT 0
 );
 
--- Create roles table if it does not exist.
 CREATE TABLE IF NOT EXISTS roles (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(20) NOT NULL UNIQUE
 );
 
--- Insert default roles if they do not exist.
 INSERT INTO roles (name)
 SELECT 'ROLE_USER'
 WHERE NOT EXISTS (SELECT 1 FROM roles WHERE name = 'ROLE_USER');
@@ -27,7 +25,6 @@ INSERT INTO roles (name)
 SELECT 'ROLE_ADMIN'
 WHERE NOT EXISTS (SELECT 1 FROM roles WHERE name = 'ROLE_ADMIN');
 
--- Create user_roles table if it does not exist.
 CREATE TABLE IF NOT EXISTS user_roles (
     user_id BIGINT NOT NULL,
     role_id INT NOT NULL,
@@ -36,7 +33,6 @@ CREATE TABLE IF NOT EXISTS user_roles (
     FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE
 );
 
--- Create quests table if it does not exist.
 CREATE TABLE IF NOT EXISTS quests (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
@@ -45,7 +41,6 @@ CREATE TABLE IF NOT EXISTS quests (
     xp_reward INT NOT NULL DEFAULT 25
 );
 
--- Create progress table if it does not exist.
 CREATE TABLE IF NOT EXISTS progress (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id BIGINT NOT NULL,
@@ -56,7 +51,6 @@ CREATE TABLE IF NOT EXISTS progress (
     FOREIGN KEY (quest_id) REFERENCES quests(id) ON DELETE CASCADE
 );
 
--- Create drawings table if it does not exist.
 CREATE TABLE IF NOT EXISTS drawings (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id BIGINT NOT NULL,

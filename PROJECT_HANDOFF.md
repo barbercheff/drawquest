@@ -53,6 +53,15 @@ Documentacion practica de API anadida:
 - Incluye ejemplos PowerShell para register/login, JWT, users, quests, drawings y progress.
 - Incluye notas de permisos por rol y setup SQL local para asignar `ROLE_ADMIN` o `ROLE_MODERATOR`.
 
+Migraciones Flyway anadidas el 2026-07-23:
+
+- Anadidas dependencias `flyway-core` y `flyway-mysql`.
+- Movido `src/main/resources/schema.sql` a `src/main/resources/db/migration/V1__init_schema.sql`.
+- Cambiado `spring.sql.init.mode` a `never`.
+- Activado `spring.flyway.baseline-on-migrate=true` para adoptar bases locales ya creadas con el antiguo `schema.sql`.
+- Mantenido `spring.jpa.hibernate.ddl-auto=validate` para validar el esquema creado por Flyway.
+- Desactivado Flyway en `DrawquestIntegrationTest`, que sigue usando H2 con `ddl-auto=create-drop`.
+
 ## Contexto general
 
 Proyecto ubicado en:
@@ -91,7 +100,7 @@ La estructura esta bastante completa:
 - `mappers`: conversion entidad/DTO
 - `security`: JWT y filtro de autenticacion
 - `config/SecurityConfig.java`: reglas de seguridad
-- `resources/schema.sql`: creacion de tablas y roles base
+- `resources/db/migration`: migraciones Flyway para tablas y roles base
 
 La build pasa con:
 
@@ -259,9 +268,12 @@ Pendiente decidir:
 
 ## Comandos utiles
 
-Nota 2026-07-11: los puntos 1 a 6 de la lista anterior ya estan completados. Tambien se movio y commiteo este handoff dentro del repo real, y se desactivo el repo Git accidental de la carpeta padre. La lista activa es:
+Nota 2026-07-11: los puntos 1 a 6 de la lista anterior ya estan completados. Tambien se movio y commiteo este handoff dentro del repo real, y se desactivo el repo Git accidental de la carpeta padre.
 
-1. Decidir siguiente bloque funcional: subida real de imagenes o frontend.
+Nota 2026-07-23: el README se actualizo para reflejar el estado real del backend y los siguientes pasos. Flyway ya esta incorporado. La lista activa es:
+
+1. Decidir e implementar subida real de imagenes para dibujos.
+2. Construir el frontend para consumir el backend y completar la aplicacion.
 
 Compilar/testear:
 
@@ -299,4 +311,5 @@ Pegar esto:
 
 ```text
 Estoy trabajando en el proyecto DrawQuest. Lee el archivo PROJECT_HANDOFF.md en la raiz del workspace y continua desde ahi. Quiero seguir con la lista priorizada: primero corregir backend base, luego tests, luego decidir frontend/subida real de imagenes.
+Estado actualizado: la base backend y Flyway ya estan completados. La lista activa empieza por subida real de imagenes y despues frontend.
 ```

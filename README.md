@@ -26,6 +26,7 @@ Backend base implementado y con tests de integracion:
 - Validacion con `@Valid` en payloads principales.
 - Swagger disponible en `/swagger-ui.html`.
 - Ejemplos practicos de API en `API_EXAMPLES.md`.
+- Migraciones de base de datos versionadas con Flyway en `src/main/resources/db/migration`.
 
 ## Stack
 
@@ -38,6 +39,7 @@ Backend base implementado y con tests de integracion:
 - JWT con `jjwt`
 - MySQL para desarrollo local
 - H2 para tests
+- Flyway para migraciones de base de datos
 - Lombok
 - Swagger/OpenAPI con springdoc
 
@@ -160,10 +162,10 @@ API_EXAMPLES.md
 
 ## Proximos Pasos
 
-La base de backend indicada en el handoff ya esta completada. El siguiente bloque funcional pendiente es decidir entre:
+La base de backend indicada en el handoff ya esta completada. La lista activa es:
 
-1. Subida real de imagenes para dibujos.
-2. Frontend para consumir el backend.
+1. Decidir e implementar subida real de imagenes para dibujos.
+2. Construir el frontend para consumir el backend y completar la aplicacion.
 
 ## Notas del Workspace
 
