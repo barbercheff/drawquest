@@ -29,6 +29,7 @@ Backend base implementado y con tests de integracion:
 - Coleccion Postman local en `postman/`.
 - Migraciones de base de datos versionadas con Flyway en `src/main/resources/db/migration`.
 - Logging basico de eventos de negocio con SLF4J/Logback.
+- Spring Boot Actuator habilitado con endpoints `health` e `info`.
 
 ## Stack
 
@@ -42,6 +43,7 @@ Backend base implementado y con tests de integracion:
 - MySQL para desarrollo local
 - H2 para tests
 - Flyway para migraciones de base de datos
+- Spring Boot Actuator para health/info
 - Lombok
 - Swagger/OpenAPI con springdoc
 
@@ -154,6 +156,17 @@ Nivel configurable:
 ```properties
 DRAWQUEST_LOG_LEVEL=INFO
 ```
+
+## Actuator
+
+Endpoints expuestos:
+
+```text
+http://localhost:8080/actuator/health
+http://localhost:8080/actuator/info
+```
+
+Solo estan expuestos `health` e `info`. Los detalles de health no se muestran publicamente.
 
 ## Estructura
 

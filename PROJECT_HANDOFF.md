@@ -78,6 +78,13 @@ Logging basico anadido el 2026-07-24:
 - Anadida configuracion `logging.level.com.drawquest=${DRAWQUEST_LOG_LEVEL:INFO}`.
 - Suite verificada con `.\mvnw.cmd test`: `BUILD SUCCESS`, 7 tests ejecutados.
 
+Spring Boot Actuator anadido el 2026-07-25:
+
+- Anadida dependencia `spring-boot-starter-actuator`.
+- Expuestos solo `/actuator/health` y `/actuator/info`.
+- Permitidos esos endpoints publicamente en `SecurityConfig`.
+- `management.endpoint.health.show-details=never`.
+
 ## Contexto general
 
 Proyecto ubicado en:

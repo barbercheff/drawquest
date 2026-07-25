@@ -83,6 +83,16 @@ class DrawquestIntegrationTest {
     }
 
     @Test
+    void actuatorHealthAndInfoArePublic() throws Exception {
+        mockMvc.perform(get("/actuator/health"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").exists());
+
+        mockMvc.perform(get("/actuator/info"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
     void registerStoresHashedPasswordAndLoginReturnsJwt() throws Exception {
         mockMvc.perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)

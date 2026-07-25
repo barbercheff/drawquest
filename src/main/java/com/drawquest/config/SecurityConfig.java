@@ -72,7 +72,9 @@ public class SecurityConfig {
                                 "/swagger-ui/index.html",
                                 "/api-docs/**",
                                 "/api-docs",
-                                "/api-docs.yaml"
+                                "/api-docs.yaml",
+                                "/actuator/health",
+                                "/actuator/info"
                         ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/users").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/users").hasRole("ADMIN")
