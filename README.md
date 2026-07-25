@@ -26,6 +26,7 @@ Backend base implementado y con tests de integracion:
 - Validacion con `@Valid` en payloads principales.
 - Swagger disponible en `/swagger-ui.html`.
 - Ejemplos practicos de API en `API_EXAMPLES.md`.
+- Coleccion Postman local en `postman/`.
 - Migraciones de base de datos versionadas con Flyway en `src/main/resources/db/migration`.
 - Logging basico de eventos de negocio con SLF4J/Logback.
 
@@ -175,6 +176,13 @@ Para ejemplos PowerShell de registro, login, JWT, quests, drawings, progress y a
 
 ```text
 API_EXAMPLES.md
+```
+
+Para pruebas manuales con Postman, importar:
+
+```text
+postman/DrawQuest.postman_collection.json
+postman/DrawQuest.local.postman_environment.json
 ```
 
 ## Proximos Pasos

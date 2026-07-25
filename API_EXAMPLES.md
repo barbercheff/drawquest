@@ -12,6 +12,13 @@ Swagger is available at:
 http://localhost:8080/swagger-ui.html
 ```
 
+Postman files are available at:
+
+```text
+postman/DrawQuest.postman_collection.json
+postman/DrawQuest.local.postman_environment.json
+```
+
 ## Authentication
 
 Register creates a regular `ROLE_USER` account.
