@@ -1,97 +1,6 @@
 # DrawQuest - resumen para continuar trabajo
 
-Fecha de referencia: 2026-07-11.
-
-## Avance aplicado el 2026-07-11
-
-Primer bloque de backend base completado:
-
-- Corregido `DrawingMapper`: `createdAt` y `modifiedAt` ya no salen invertidos en `DrawingResponseDTO`.
-- Movida la codificacion BCrypt de passwords a `UserServiceImpl.createUser`.
-- Eliminada la codificacion directa en `AuthController.register`.
-- Restringido `POST /users` a `ROLE_ADMIN`.
-- Restringido CRUD de quests:
-  - `GET /quests/**`: autenticado
-  - `POST /quests`: `ROLE_ADMIN` o `ROLE_MODERATOR`
-  - `PUT /quests/*`: `ROLE_ADMIN` o `ROLE_MODERATOR`
-  - `DELETE /quests/*`: `ROLE_ADMIN`
-- Anadido `@Valid` en create/update de `QuestController`.
-- Anadido `src/test/java/com/drawquest/DrawquestIntegrationTest.java` con tests de integracion para registro/login, autorizacion y aprobacion idempotente de dibujos.
-
-Verificacion ejecutada:
-
-```powershell
-cd "C:\Users\victor\Desktop\PROGRAMACIÓN\APPS\drawquest app\drawquest"
-.\mvnw.cmd test
-```
-
-Resultado observado: `BUILD SUCCESS`, 3 tests ejecutados.
-
-Handoff movido al repo real (`drawquest/PROJECT_HANDOFF.md`) y commiteado. El repo Git accidental de la carpeta padre `drawquest app` se desactivo renombrando su `.git` a `.git.disabled-parent-repo`; el repo activo debe seguir siendo siempre `drawquest`.
-
-Arranque real con MySQL validado el 2026-07-11:
-
-- Servicio MySQL local `MySQL80` en ejecucion.
-- Backend arrancado con `DRAWQUEST_DB_USERNAME=drawquest_admin` y password local configurada.
-- `http://localhost:8080/swagger-ui.html` responde `200`.
-- `http://localhost:8080/api-docs` responde `200`.
-- Registro y login reales contra MySQL verificados con usuario temporal `startup_test_*`; login devolvio JWT.
-
-Tests de autorizacion/validacion ampliados el 2026-07-11:
-
-- Moderator puede crear y editar quests.
-- Moderator no puede borrar quests.
-- Admin puede borrar quests.
-- Payloads invalidos de quests y drawings devuelven `400 VALIDATION_ERROR`.
-- Usuarios solo pueden listar/ver/editar sus propios dibujos.
-- Usuarios solo pueden listar/ver su propio progreso.
-- Suite verificada con `.\mvnw.cmd test`: `BUILD SUCCESS`, 7 tests ejecutados.
-
-Documentacion practica de API anadida:
-
-- Nuevo archivo `API_EXAMPLES.md`.
-- Incluye ejemplos PowerShell para register/login, JWT, users, quests, drawings y progress.
-- Incluye notas de permisos por rol y setup SQL local para asignar `ROLE_ADMIN` o `ROLE_MODERATOR`.
-
-Migraciones Flyway anadidas el 2026-07-23:
-
-- Anadidas dependencias `flyway-core` y `flyway-mysql`.
-- Movido `src/main/resources/schema.sql` a `src/main/resources/db/migration/V1__init_schema.sql`.
-- Cambiado `spring.sql.init.mode` a `never`.
-- Activado `spring.flyway.baseline-on-migrate=true` para adoptar bases locales ya creadas con el antiguo `schema.sql`.
-- Mantenido `spring.jpa.hibernate.ddl-auto=validate` para validar el esquema creado por Flyway.
-- Desactivado Flyway en `DrawquestIntegrationTest`, que sigue usando H2 con `ddl-auto=create-drop`.
-
-Actualizacion conservadora de dependencias aplicada el 2026-07-23:
-
-- Spring Boot actualizado de `3.4.2` a `3.5.16`.
-- Springdoc actualizado de `2.8.0` a `2.8.17`, compatible con Spring Boot 3.5.x.
-- JJWT actualizado de `0.12.6` a `0.13.0`.
-- Lombok actualizado de `1.18.34` a `1.18.46`.
-- Eliminada la version explicita de `mysql-connector-j` para usar la version gestionada por el BOM de Spring Boot.
-- Suite verificada con `.\mvnw.cmd test`: `BUILD SUCCESS`, 7 tests ejecutados.
-
-Logging basico anadido el 2026-07-24:
-
-- Anadidos logs con SLF4J/Logback en autenticacion, usuarios, quests, dibujos y errores inesperados.
-- Evitados passwords, JWT y payloads completos en logs.
-- Anadida configuracion `logging.level.com.drawquest=${DRAWQUEST_LOG_LEVEL:INFO}`.
-- Suite verificada con `.\mvnw.cmd test`: `BUILD SUCCESS`, 7 tests ejecutados.
-
-Spring Boot Actuator anadido el 2026-07-25:
-
-- Anadida dependencia `spring-boot-starter-actuator`.
-- Expuestos solo `/actuator/health` y `/actuator/info`.
-- Permitidos esos endpoints publicamente en `SecurityConfig`.
-- `management.endpoint.health.show-details=never`.
-
-Validacion de parametros anadida el 2026-07-26:
-
-- Anadido `@Validated` en controladores con parametros de ruta.
-- Anadido `@Positive` a IDs de ruta (`users`, `quests`, `drawings`, `progress`).
-- Anadido `@Positive` a `DrawingCreateDTO.questId`.
-- Anadido handler para `ConstraintViolationException` con `400 VALIDATION_ERROR`.
-- Suite verificada con `.\mvnw.cmd test`: `BUILD SUCCESS`, 9 tests ejecutados.
+Fecha de referencia: 2026-07-26.
 
 ## Contexto general
 
@@ -103,9 +12,39 @@ La app principal esta dentro de:
 
 `drawquest`
 
-Es un backend Java/Spring Boot para una app llamada DrawQuest. La idea es que usuarios participen en misiones de dibujo, suban dibujos, reciban aprobacion y progresen con XP/niveles.
+DrawQuest es una aplicacion de misiones de dibujo. El trabajo actual esta centrado en el backend Java/Spring Boot; despues vendra el frontend para completar la aplicacion.
 
-## Stack detectado
+La idea es que usuarios participen en misiones de dibujo, suban dibujos, reciban aprobacion y progresen con XP/niveles.
+
+## Estado actual
+
+Backend base completado y verificado:
+
+- Autenticacion con registro/login y JWT.
+- Passwords codificadas con BCrypt en `UserServiceImpl.createUser`.
+- Registro publico con rol por defecto `ROLE_USER`.
+- `POST /users` restringido a `ROLE_ADMIN`.
+- Usuarios solo pueden consultar/borrar su propio usuario por ID.
+- CRUD de quests protegido por rol:
+  - `GET /quests/**`: autenticado.
+  - `POST /quests`: `ROLE_ADMIN` o `ROLE_MODERATOR`.
+  - `PUT /quests/*`: `ROLE_ADMIN` o `ROLE_MODERATOR`.
+  - `DELETE /quests/*`: `ROLE_ADMIN`.
+- Usuarios solo pueden listar/ver/editar/borrar sus propios dibujos.
+- Aprobacion de dibujos restringida a `ROLE_ADMIN` o `ROLE_MODERATOR`.
+- Usuarios solo pueden listar/ver su propio progreso.
+- Validacion con `@Valid` en payloads principales.
+- Validacion de IDs positivos en parametros de ruta con `@Validated` y `@Positive`.
+- Validacion de `DrawingCreateDTO.questId` como positivo.
+- Handler de errores de validacion devuelve `400 VALIDATION_ERROR`.
+- Swagger disponible en `/swagger-ui.html`.
+- Actuator disponible en `/actuator/health` y `/actuator/info`.
+- Logging basico de eventos de negocio con SLF4J/Logback.
+- Coleccion Postman local en `postman/`.
+- Ejemplos practicos de API en `API_EXAMPLES.md`.
+- Migraciones Flyway en `src/main/resources/db/migration`.
+
+## Stack
 
 - Java 17
 - Spring Boot 3.5.16
@@ -113,15 +52,15 @@ Es un backend Java/Spring Boot para una app llamada DrawQuest. La idea es que us
 - Spring Web
 - Spring Security
 - Spring Data JPA
-- JWT con `jjwt`
-- MySQL por defecto
-- H2 disponible como dependencia
+- Spring Boot Actuator
+- JWT con `jjwt` 0.13.0
+- MySQL para desarrollo local
+- H2 para tests
+- Flyway
 - Lombok
 - Swagger/OpenAPI con springdoc
 
-## Estado actual del backend
-
-La estructura esta bastante completa:
+## Estructura
 
 - `controllers`: controladores REST
 - `services` y `services/impl`: logica de negocio
@@ -132,15 +71,9 @@ La estructura esta bastante completa:
 - `security`: JWT y filtro de autenticacion
 - `config/SecurityConfig.java`: reglas de seguridad
 - `resources/db/migration`: migraciones Flyway para tablas y roles base
+- `postman`: coleccion y environment local de Postman
 
-La build pasa con:
-
-```powershell
-cd "C:\Users\victor\Desktop\PROGRAMACION\APPS\drawquest app\drawquest"
-.\mvnw.cmd test
-```
-
-Resultado observado: `BUILD SUCCESS`.
+El repo Git activo esta dentro de `drawquest`. La carpeta padre tiene el antiguo repo accidental desactivado como `.git.disabled-parent-repo`.
 
 ## Funcionalidad implementada
 
@@ -149,7 +82,6 @@ Resultado observado: `BUILD SUCCESS`.
 - `POST /auth/register`
 - `POST /auth/login`
 - JWT en header `Authorization: Bearer <token>`
-- Passwords en `/auth/register` se codifican con BCrypt.
 
 ### Usuarios
 
@@ -181,128 +113,96 @@ Resultado observado: `BUILD SUCCESS`.
 - `GET /progress`
 - `GET /progress/{id}`
 
-### Logica de progreso
+### Actuator
+
+- `GET /actuator/health`
+- `GET /actuator/info`
+
+## Logica de progreso
 
 - Al crear un dibujo se crea o recupera el progreso de usuario+quest y se incrementan los intentos.
 - Al aprobar un dibujo:
-  - el dibujo queda aprobado
-  - el progreso se marca como completado si no lo estaba
-  - se suma XP al usuario
-  - se recalcula nivel con `xp / 100`
-  - no se vuelve a sumar XP si esa quest ya estaba completada
+  - el dibujo queda aprobado.
+  - el progreso se marca como completado si no lo estaba.
+  - se suma XP al usuario.
+  - se recalcula nivel con `xp / 100`.
+  - no se vuelve a sumar XP si esa quest ya estaba completada.
 
-## Riesgos y cosas a medias
+## Historial reciente
 
-1. Bug en fechas de `DrawingMapper`
+### 2026-07-11
 
-Archivo:
+- Corregido `DrawingMapper`: `createdAt` y `modifiedAt` ya no salen invertidos en `DrawingResponseDTO`.
+- Movida la codificacion BCrypt de passwords a `UserServiceImpl.createUser`.
+- Eliminada la codificacion directa en `AuthController.register`.
+- Restringido `POST /users` a `ROLE_ADMIN`.
+- Restringido CRUD de quests por rol.
+- Anadido `@Valid` en create/update de `QuestController`.
+- Anadidos tests de integracion para registro/login, autorizacion y aprobacion idempotente de dibujos.
+- Arranque real con MySQL validado.
+- Swagger y `/api-docs` validados.
+- `API_EXAMPLES.md` anadido.
+- Handoff movido al repo real.
+- Repo Git accidental de la carpeta padre desactivado.
 
-`drawquest/src/main/java/com/drawquest/mappers/DrawingMapper.java`
+### 2026-07-23
 
-El constructor de `DrawingResponseDTO` espera:
+- Flyway incorporado:
+  - dependencias `flyway-core` y `flyway-mysql`.
+  - migracion inicial `V1__init_schema.sql`.
+  - `spring.sql.init.mode=never`.
+  - `spring.flyway.baseline-on-migrate=true`.
+  - `spring.jpa.hibernate.ddl-auto=validate`.
+  - Flyway desactivado en tests H2 con `ddl-auto=create-drop`.
+- Dependencias actualizadas:
+  - Spring Boot `3.4.2` a `3.5.16`.
+  - Springdoc `2.8.0` a `2.8.17`.
+  - JJWT `0.12.6` a `0.13.0`.
+  - Lombok `1.18.34` a `1.18.46`.
+  - `mysql-connector-j` pasa a version gestionada por el BOM de Spring Boot.
 
-```java
-id, userId, questId, imageUrl, approved, createdAt, modifiedAt
-```
+### 2026-07-24
 
-Pero el mapper pasa:
+- Logging basico anadido en autenticacion, usuarios, quests, dibujos y errores inesperados.
+- Evitados passwords, JWT y payloads completos en logs.
+- Configuracion `logging.level.com.drawquest=${DRAWQUEST_LOG_LEVEL:INFO}`.
+- `JwtUtil` actualizado a la API actual de JJWT:
+  - `Jwts.SIG.HS256`.
+  - `verifyWith`.
+  - `getPayload`.
+  - `SecretKey`.
 
-```java
-drawing.getModifiedAt(),
-drawing.getCreatedAt()
-```
+### 2026-07-25
 
-Estan invertidas.
+- Coleccion Postman local anadida:
+  - `postman/DrawQuest.postman_collection.json`.
+  - `postman/DrawQuest.local.postman_environment.json`.
+- Spring Boot Actuator anadido:
+  - dependencia `spring-boot-starter-actuator`.
+  - expuestos solo `/actuator/health` y `/actuator/info`.
+  - endpoints permitidos publicamente en `SecurityConfig`.
+  - `management.endpoint.health.show-details=never`.
 
-2. `POST /users` puede guardar passwords sin hash
+### 2026-07-26
 
-Archivo:
+- Validacion de parametros anadida:
+  - `@Validated` en controladores con parametros de ruta.
+  - `@Positive` a IDs de ruta (`users`, `quests`, `drawings`, `progress`).
+  - `@Positive` a `DrawingCreateDTO.questId`.
+  - handler para `ConstraintViolationException` con `400 VALIDATION_ERROR`.
+- Suite verificada con `.\mvnw.cmd test`: `BUILD SUCCESS`, 9 tests ejecutados.
 
-`drawquest/src/main/java/com/drawquest/controllers/UserController.java`
+## Lista activa
 
-`/auth/register` codifica la password antes de llamar a `userService.createUser`, pero `POST /users` llama directamente a `userService.createUser` sin codificar.
+1. Quitar password hardcodeada de MySQL en `application.properties` y usar `DRAWQUEST_DB_PASSWORD`.
+2. Decidir e implementar subida real de imagenes para dibujos.
+3. Configurar CORS cuando empiece el frontend.
+4. Decidir seeds de quests iniciales.
+5. Construir el frontend para consumir el backend y completar la aplicacion.
 
-Solucion recomendada: mover el hash de password al `UserService`, no al controlador. Asi cualquier creacion de usuario queda protegida.
-
-3. Seguridad incompleta en quests
-
-Archivo:
-
-`drawquest/src/main/java/com/drawquest/config/SecurityConfig.java`
-
-Actualmente solo hay reglas explicitas para:
-
-- `GET /users`: admin
-- `PUT /drawings/*/approve`: admin o moderator
-
-El resto queda como `authenticated`.
-
-Eso significa que cualquier usuario autenticado puede crear, editar o borrar quests. Recomendado:
-
-- `GET /quests/**`: usuario autenticado
-- `POST /quests`: admin/moderator
-- `PUT /quests/{id}`: admin/moderator
-- `DELETE /quests/{id}`: admin
-
-4. Falta `@Valid` en `QuestController`
-
-Archivo:
-
-`drawquest/src/main/java/com/drawquest/controllers/QuestController.java`
-
-Los DTOs de quest tienen validaciones, pero create/update no usan `@Valid`, asi que esas validaciones no se aplican.
-
-5. No hay tests
-
-Crear tests minimos para:
-
-- registro guarda password hasheada
-- login devuelve JWT
-- usuario normal no puede listar usuarios
-- usuario normal no puede aprobar dibujos
-- usuario normal no puede crear/editar/borrar quests si se restringe
-- aprobar dibujo completa progreso y suma XP solo una vez
-
-6. Estado Git peculiar
-
-En el repo raiz, `git status --short` mostraba:
-
-```text
- M drawquest
-?? drawquest.zip
-```
-
-Dentro de `drawquest`, `git status --short` no mostraba cambios.
-
-El repo raiz parece tratar `drawquest` como submodulo o repo anidado, pero `git submodule status` falla porque no hay `.gitmodules`.
-
-Pendiente decidir:
-
-- si `drawquest` debe ser submodulo real
-- si debe ser carpeta normal
-- que hacer con `drawquest.zip`
-
-## Lista priorizada para continuar
-
-1. Corregir `DrawingMapper` para no invertir `createdAt` y `modifiedAt`.
-2. Mover codificacion BCrypt de password a `UserServiceImpl.createUser`.
-3. Eliminar, restringir o corregir `POST /users`.
-4. Proteger CRUD de quests por rol en `SecurityConfig`.
-5. Añadir `@Valid` en `QuestController`.
-6. Añadir tests de autenticacion/autorizacion/progreso.
-7. Probar arranque real con MySQL y variables de entorno.
-8. Revisar estructura Git del repo raiz y `drawquest.zip`.
-9. Documentar ejemplos practicos de API.
-10. Decidir siguiente bloque funcional: subida real de imagenes o frontend.
+Docker queda descartado por ahora; para pruebas locales se usa MySQL instalado en el ordenador.
 
 ## Comandos utiles
-
-Nota 2026-07-11: los puntos 1 a 6 de la lista anterior ya estan completados. Tambien se movio y commiteo este handoff dentro del repo real, y se desactivo el repo Git accidental de la carpeta padre.
-
-Nota 2026-07-23: el README se actualizo para reflejar el estado real del backend y los siguientes pasos. Flyway ya esta incorporado. La lista activa es:
-
-1. Decidir e implementar subida real de imagenes para dibujos.
-2. Construir el frontend para consumir el backend y completar la aplicacion.
 
 Compilar/testear:
 
@@ -326,6 +226,7 @@ DRAWQUEST_DB_USERNAME=drawquest_admin
 DRAWQUEST_DB_PASSWORD=your_password
 DRAWQUEST_JWT_SECRET=base64_secret_with_at_least_256_bits
 DRAWQUEST_JWT_EXPIRATION_MS=3600000
+DRAWQUEST_LOG_LEVEL=INFO
 ```
 
 Swagger:
@@ -334,11 +235,17 @@ Swagger:
 http://localhost:8080/swagger-ui.html
 ```
 
+Actuator:
+
+```text
+http://localhost:8080/actuator/health
+http://localhost:8080/actuator/info
+```
+
 ## Instruccion para una conversacion nueva
 
 Pegar esto:
 
 ```text
-Estoy trabajando en el proyecto DrawQuest. Lee el archivo PROJECT_HANDOFF.md en la raiz del workspace y continua desde ahi. Quiero seguir con la lista priorizada: primero corregir backend base, luego tests, luego decidir frontend/subida real de imagenes.
-Estado actualizado: la base backend y Flyway ya estan completados. La lista activa empieza por subida real de imagenes y despues frontend.
+Estoy trabajando en el proyecto DrawQuest. Lee el archivo PROJECT_HANDOFF.md en la raiz del repo drawquest y continua desde ahi. La base backend ya esta completada. La lista activa empieza por quitar la password hardcodeada, luego implementar subida real de imagenes, CORS, seeds de quests iniciales y frontend.
 ```
