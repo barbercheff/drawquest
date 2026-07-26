@@ -83,6 +83,23 @@ class DrawquestIntegrationTest {
     }
 
     @Test
+    void auditableEntitiesPopulateTimestamps() {
+        User user = createUser("audit_user", "secret123", "audit_user@example.com", ERole.ROLE_USER);
+        Quest quest = createQuest("Draw a clock", 20);
+        Drawing drawing = createDrawing(user, quest, "https://example.com/clock.png");
+        Progress progress = createProgress(user, quest, 1);
+
+        assertThat(user.getCreatedAt()).isNotNull();
+        assertThat(user.getModifiedAt()).isNotNull();
+        assertThat(quest.getCreatedAt()).isNotNull();
+        assertThat(quest.getModifiedAt()).isNotNull();
+        assertThat(drawing.getCreatedAt()).isNotNull();
+        assertThat(drawing.getModifiedAt()).isNotNull();
+        assertThat(progress.getCreatedAt()).isNotNull();
+        assertThat(progress.getModifiedAt()).isNotNull();
+    }
+
+    @Test
     void actuatorHealthAndInfoArePublic() throws Exception {
         mockMvc.perform(get("/actuator/health"))
                 .andExpect(status().isOk())

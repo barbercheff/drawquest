@@ -16,7 +16,7 @@ import java.util.List;
 @Getter
 @Entity
 @Table(name = "quests")
-public class Quest {
+public class Quest extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

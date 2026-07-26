@@ -43,6 +43,7 @@ Backend base completado y verificado:
 - Coleccion Postman local en `postman/`.
 - Ejemplos practicos de API en `API_EXAMPLES.md`.
 - Migraciones Flyway en `src/main/resources/db/migration`.
+- Timestamps de auditoria `createdAt` y `modifiedAt` en `User`, `Quest`, `Progress` y `Drawing`.
 
 ## Stack
 
@@ -190,9 +191,12 @@ El repo Git activo esta dentro de `drawquest`. La carpeta padre tiene el antiguo
   - `@Positive` a IDs de ruta (`users`, `quests`, `drawings`, `progress`).
   - `@Positive` a `DrawingCreateDTO.questId`.
   - handler para `ConstraintViolationException` con `400 VALIDATION_ERROR`.
-- `Drawing.createdAt` y `Drawing.modifiedAt` pasan a gestionarse en la entidad con `@PrePersist` y `@PreUpdate`.
-- Eliminadas asignaciones manuales de timestamps en `DrawingMapper` y `DrawingServiceImpl`.
-- Suite verificada con `.\mvnw.cmd test`: `BUILD SUCCESS`, 9 tests ejecutados.
+- Anadida auditoria comun:
+  - nuevo `AuditableEntity` con `@PrePersist` y `@PreUpdate`.
+  - `User`, `Quest`, `Progress` y `Drawing` heredan `createdAt` y `modifiedAt`.
+  - nueva migracion Flyway `V2__add_audit_timestamps.sql` para `users`, `quests` y `progress`.
+  - eliminadas asignaciones manuales de timestamps en `DrawingMapper` y `DrawingServiceImpl`.
+- Suite verificada con `.\mvnw.cmd test`: `BUILD SUCCESS`, 10 tests ejecutados.
 
 ## Lista activa
 

@@ -30,6 +30,7 @@ Backend base implementado y con tests de integracion:
 - Migraciones de base de datos versionadas con Flyway en `src/main/resources/db/migration`.
 - Logging basico de eventos de negocio con SLF4J/Logback.
 - Spring Boot Actuator habilitado con endpoints `health` e `info`.
+- Timestamps de auditoria `createdAt` y `modifiedAt` en entidades principales.
 
 ## Stack
 
