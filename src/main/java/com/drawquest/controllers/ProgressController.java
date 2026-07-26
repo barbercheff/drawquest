@@ -2,9 +2,11 @@ package com.drawquest.controllers;
 
 import com.drawquest.dtos.ProgressResponseDTO;
 import com.drawquest.services.ProgressService;
+import jakarta.validation.constraints.Positive;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/progress")
+@Validated
 public class ProgressController {
 
     private final ProgressService progressService;
@@ -28,7 +31,7 @@ public class ProgressController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProgressResponseDTO> getProgressById(@PathVariable Long id,
+    public ResponseEntity<ProgressResponseDTO> getProgressById(@PathVariable @Positive(message = "Progress ID must be positive") Long id,
                                                                @AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(progressService.getProgressById(id, userDetails.getUsername()));
     }

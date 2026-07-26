@@ -85,6 +85,14 @@ Spring Boot Actuator anadido el 2026-07-25:
 - Permitidos esos endpoints publicamente en `SecurityConfig`.
 - `management.endpoint.health.show-details=never`.
 
+Validacion de parametros anadida el 2026-07-26:
+
+- Anadido `@Validated` en controladores con parametros de ruta.
+- Anadido `@Positive` a IDs de ruta (`users`, `quests`, `drawings`, `progress`).
+- Anadido `@Positive` a `DrawingCreateDTO.questId`.
+- Anadido handler para `ConstraintViolationException` con `400 VALIDATION_ERROR`.
+- Suite verificada con `.\mvnw.cmd test`: `BUILD SUCCESS`, 9 tests ejecutados.
+
 ## Contexto general
 
 Proyecto ubicado en:
@@ -133,8 +141,6 @@ cd "C:\Users\victor\Desktop\PROGRAMACION\APPS\drawquest app\drawquest"
 ```
 
 Resultado observado: `BUILD SUCCESS`.
-
-Importante: no hay tests reales en `src/test`; Maven pasa porque no tiene pruebas que ejecutar.
 
 ## Funcionalidad implementada
 

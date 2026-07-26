@@ -10,10 +10,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +28,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/users")
+@Validated
 @SecurityRequirement(name = "BearerAuth")
 @Tag(name = "Users", description = "User operations")
 public class UserController {
@@ -55,7 +58,7 @@ public class UserController {
     @ApiResponse(responseCode = "200", description = "User found")
     @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Long id,
+    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable @Positive(message = "User ID must be positive") Long id,
                                                        @AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(userService.getUserById(id, userDetails.getUsername()));
     }
@@ -77,7 +80,7 @@ public class UserController {
     @ApiResponse(responseCode = "204", description = "User deleted successfully", content = @Content)
     @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id,
+    public ResponseEntity<Void> deleteUser(@PathVariable @Positive(message = "User ID must be positive") Long id,
                                            @AuthenticationPrincipal UserDetails userDetails) {
         userService.deleteUser(id, userDetails.getUsername());
         return ResponseEntity.noContent().build();

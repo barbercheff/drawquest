@@ -4,6 +4,7 @@ import com.drawquest.dtos.ErrorResponseDTO;
 import com.drawquest.exceptions.DuplicateResourceException;
 import com.drawquest.exceptions.ResourceNotFoundException;
 import com.drawquest.exceptions.UnauthorizedException;
+import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -48,6 +49,16 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.badRequest()
                 .body(new ErrorResponseDTO("VALIDATION_ERROR", "Some fields are invalid", errors));
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorResponseDTO> handleConstraintViolation(ConstraintViolationException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getConstraintViolations().forEach(violation ->
+                errors.put(violation.getPropertyPath().toString(), violation.getMessage()));
+
+        return ResponseEntity.badRequest()
+                .body(new ErrorResponseDTO("VALIDATION_ERROR", "Some parameters are invalid", errors));
     }
 
     @ExceptionHandler(Exception.class)

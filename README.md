@@ -23,7 +23,7 @@ Backend base implementado y con tests de integracion:
 - Aprobacion de dibujos restringida a `ROLE_ADMIN` o `ROLE_MODERATOR`.
 - Usuarios solo pueden consultar/modificar sus propios dibujos.
 - Usuarios solo pueden consultar su propio progreso.
-- Validacion con `@Valid` en payloads principales.
+- Validacion con `@Valid` en payloads principales y validacion de IDs positivos en parametros de ruta.
 - Swagger disponible en `/swagger-ui.html`.
 - Ejemplos practicos de API en `API_EXAMPLES.md`.
 - Coleccion Postman local en `postman/`.

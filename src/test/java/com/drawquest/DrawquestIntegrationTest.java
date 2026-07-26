@@ -226,6 +226,41 @@ class DrawquestIntegrationTest {
                 """))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errorCode").value("VALIDATION_ERROR"));
+
+        mockMvc.perform(post("/drawings")
+                        .header("Authorization", bearer(userToken))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "questId": 0,
+                                  "imageUrl": "https://example.com/drawings/castle.png"
+                                }
+                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorCode").value("VALIDATION_ERROR"));
+    }
+
+    @Test
+    void nonPositivePathIdsReturnBadRequest() throws Exception {
+        User admin = createUser("param_admin", "secret123", "param_admin@example.com", ERole.ROLE_ADMIN);
+        User user = createUser("param_user", "secret123", "param_user@example.com", ERole.ROLE_USER);
+        String adminToken = tokenFor(admin, "secret123");
+        String userToken = tokenFor(user, "secret123");
+
+        mockMvc.perform(get("/quests/0")
+                        .header("Authorization", bearer(userToken)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorCode").value("VALIDATION_ERROR"));
+
+        mockMvc.perform(put("/drawings/0/approve")
+                        .header("Authorization", bearer(adminToken)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorCode").value("VALIDATION_ERROR"));
+
+        mockMvc.perform(get("/progress/0")
+                        .header("Authorization", bearer(userToken)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorCode").value("VALIDATION_ERROR"));
     }
 
     @Test

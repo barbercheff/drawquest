@@ -11,10 +11,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,6 +30,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/drawings")
+@Validated
 @SecurityRequirement(name = "BearerAuth")
 @Tag(name = "Drawings", description = "Drawing operations")
 public class DrawingController {
@@ -59,7 +62,7 @@ public class DrawingController {
             }
     )
     @GetMapping("/{id}")
-    public ResponseEntity<DrawingResponseDTO> getDrawingById(@PathVariable Long id,
+    public ResponseEntity<DrawingResponseDTO> getDrawingById(@PathVariable @Positive(message = "Drawing ID must be positive") Long id,
                                                              @AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(drawingService.getDrawingById(id, userDetails.getUsername()));
     }
@@ -95,7 +98,7 @@ public class DrawingController {
     )
     @PutMapping("/{id}")
     public ResponseEntity<DrawingResponseDTO> updateDrawing(
-            @PathVariable Long id,
+            @PathVariable @Positive(message = "Drawing ID must be positive") Long id,
             @Valid @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Drawing update data",
                     required = true,
@@ -115,7 +118,7 @@ public class DrawingController {
             }
     )
     @PutMapping("/{id}/approve")
-    public ResponseEntity<DrawingResponseDTO> approveDrawing(@PathVariable Long id) {
+    public ResponseEntity<DrawingResponseDTO> approveDrawing(@PathVariable @Positive(message = "Drawing ID must be positive") Long id) {
         return ResponseEntity.ok(drawingService.approveDrawing(id));
     }
 
@@ -123,7 +126,7 @@ public class DrawingController {
     @ApiResponse(responseCode = "204", description = "Drawing deleted successfully", content = @Content)
     @ApiResponse(responseCode = "404", description = "Drawing not found", content = @Content)
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteDrawing(@PathVariable Long id,
+    public ResponseEntity<Void> deleteDrawing(@PathVariable @Positive(message = "Drawing ID must be positive") Long id,
                                               @AuthenticationPrincipal UserDetails userDetails) {
         drawingService.deleteDrawing(id, userDetails.getUsername());
         return ResponseEntity.noContent().build();
