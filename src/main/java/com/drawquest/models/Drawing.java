@@ -7,6 +7,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -35,12 +37,23 @@ public class Drawing {
     private String imageUrl;
 
     @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
 
     @Column(nullable = false)
-    private LocalDateTime modifiedAt = LocalDateTime.now();
+    private LocalDateTime modifiedAt;
 
     @Column(nullable = false)
-    private boolean approved; // Indica si la IA ha aprobado el dibujo
+    private boolean approved;
 
+    @PrePersist
+    void onCreate() {
+        LocalDateTime now = LocalDateTime.now();
+        createdAt = now;
+        modifiedAt = now;
+    }
+
+    @PreUpdate
+    void onUpdate() {
+        modifiedAt = LocalDateTime.now();
+    }
 }

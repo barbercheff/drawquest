@@ -19,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -89,8 +88,6 @@ public class DrawingServiceImpl implements DrawingService {
             existingDrawing.setImageUrl(drawingUpdateDTO.getImageUrl());
         }
 
-        existingDrawing.setModifiedAt(LocalDateTime.now());
-
         Drawing savedDrawing = drawingRepository.save(existingDrawing);
         logger.info("Updated drawing id={} username={}", savedDrawing.getId(), username);
         return DrawingMapper.toDrawingResponseDTO(savedDrawing);
@@ -103,7 +100,6 @@ public class DrawingServiceImpl implements DrawingService {
                 .orElseThrow(() -> new ResourceNotFoundException("Drawing with ID " + id + " not found"));
 
         drawing.setApproved(true);
-        drawing.setModifiedAt(LocalDateTime.now());
 
         Progress progress = progressRepository.findByUserIdAndQuestId(drawing.getUser().getId(), drawing.getQuest().getId())
                 .orElseGet(() -> createProgress(drawing.getUser(), drawing.getQuest()));

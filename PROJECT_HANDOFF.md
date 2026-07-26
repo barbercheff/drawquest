@@ -190,6 +190,8 @@ El repo Git activo esta dentro de `drawquest`. La carpeta padre tiene el antiguo
   - `@Positive` a IDs de ruta (`users`, `quests`, `drawings`, `progress`).
   - `@Positive` a `DrawingCreateDTO.questId`.
   - handler para `ConstraintViolationException` con `400 VALIDATION_ERROR`.
+- `Drawing.createdAt` y `Drawing.modifiedAt` pasan a gestionarse en la entidad con `@PrePersist` y `@PreUpdate`.
+- Eliminadas asignaciones manuales de timestamps en `DrawingMapper` y `DrawingServiceImpl`.
 - Suite verificada con `.\mvnw.cmd test`: `BUILD SUCCESS`, 9 tests ejecutados.
 
 ## Lista activa

@@ -6,8 +6,6 @@ import com.drawquest.models.Drawing;
 import com.drawquest.models.Quest;
 import com.drawquest.models.User;
 
-import java.time.LocalDateTime;
-
 public class DrawingMapper {
 
     public static DrawingResponseDTO toDrawingResponseDTO(Drawing drawing) {
@@ -37,8 +35,6 @@ public class DrawingMapper {
         drawing.setQuest(quest);
         drawing.setImageUrl(dto.getImageUrl());
         drawing.setApproved(false);
-        drawing.setCreatedAt(LocalDateTime.now());
-        drawing.setModifiedAt(LocalDateTime.now());
 
         return drawing;
     }
