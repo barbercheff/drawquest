@@ -1,6 +1,6 @@
 # DrawQuest - resumen para continuar trabajo
 
-Fecha de referencia: 2026-07-26.
+Fecha de referencia: 2026-08-01.
 
 ## Contexto general
 
@@ -43,6 +43,7 @@ Backend base completado y verificado:
 - Coleccion Postman local en `postman/`.
 - Ejemplos practicos de API en `API_EXAMPLES.md`.
 - Migraciones Flyway en `src/main/resources/db/migration`.
+- Quests iniciales creadas con Flyway en `V3__seed_initial_quests.sql`.
 - Timestamps de auditoria `createdAt` y `modifiedAt` en `User`, `Quest`, `Progress` y `Drawing`.
 
 ## Stack
@@ -198,13 +199,22 @@ El repo Git activo esta dentro de `drawquest`. La carpeta padre tiene el antiguo
   - eliminadas asignaciones manuales de timestamps en `DrawingMapper` y `DrawingServiceImpl`.
 - Suite verificada con `.\mvnw.cmd test`: `BUILD SUCCESS`, 10 tests ejecutados.
 
+### 2026-08-01
+
+- Password hardcodeada de MySQL retirada de `application.properties`.
+- `spring.datasource.password` usa `DRAWQUEST_DB_PASSWORD`.
+- Anadida migracion Flyway `V3__seed_initial_quests.sql` con quests iniciales:
+  - `Dibuja una casa flotante`
+  - `Crea un animal robot`
+  - `Disena una ciudad bajo el agua`
+  - `Inventa un heroe de fantasia`
+  - `Dibuja una escena con luz dramatica`
+
 ## Lista activa
 
-1. Quitar password hardcodeada de MySQL en `application.properties` y usar `DRAWQUEST_DB_PASSWORD`.
-2. Decidir e implementar subida real de imagenes para dibujos.
-3. Configurar CORS cuando empiece el frontend.
-4. Decidir seeds de quests iniciales.
-5. Construir el frontend para consumir el backend y completar la aplicacion.
+1. Decidir e implementar subida real de imagenes para dibujos.
+2. Configurar CORS cuando empiece el frontend.
+3. Construir el frontend para consumir el backend y completar la aplicacion.
 
 Docker queda descartado por ahora; para pruebas locales se usa MySQL instalado en el ordenador.
 
@@ -253,5 +263,5 @@ http://localhost:8080/actuator/info
 Pegar esto:
 
 ```text
-Estoy trabajando en el proyecto DrawQuest. Lee el archivo PROJECT_HANDOFF.md en la raiz del repo drawquest y continua desde ahi. La base backend ya esta completada. La lista activa empieza por quitar la password hardcodeada, luego implementar subida real de imagenes, CORS, seeds de quests iniciales y frontend.
+Estoy trabajando en el proyecto DrawQuest. Lee el archivo PROJECT_HANDOFF.md en la raiz del repo drawquest y continua desde ahi. La base backend ya esta completada. La lista activa empieza por implementar subida real de imagenes, luego CORS y frontend.
 ```

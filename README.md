@@ -4,7 +4,7 @@ DrawQuest es una aplicacion de misiones de dibujo. Los usuarios se registran, in
 
 El proyecto esta en desarrollo. El trabajo actual esta centrado en el backend Java/Spring Boot; cuando esta base quede cerrada, el siguiente objetivo sera construir el frontend y completar la aplicacion.
 
-Estado de referencia: 2026-07-23.
+Estado de referencia: 2026-08-01.
 
 ## Estado Actual
 
@@ -28,6 +28,7 @@ Backend base implementado y con tests de integracion:
 - Ejemplos practicos de API en `API_EXAMPLES.md`.
 - Coleccion Postman local en `postman/`.
 - Migraciones de base de datos versionadas con Flyway en `src/main/resources/db/migration`.
+- Quests iniciales creadas con Flyway en `V3__seed_initial_quests.sql`.
 - Logging basico de eventos de negocio con SLF4J/Logback.
 - Spring Boot Actuator habilitado con endpoints `health` e `info`.
 - Timestamps de auditoria `createdAt` y `modifiedAt` en entidades principales.
@@ -204,7 +205,8 @@ postman/DrawQuest.local.postman_environment.json
 La base de backend indicada en el handoff ya esta completada. La lista activa es:
 
 1. Decidir e implementar subida real de imagenes para dibujos.
-2. Construir el frontend para consumir el backend y completar la aplicacion.
+2. Configurar CORS cuando empiece el frontend.
+3. Construir el frontend para consumir el backend y completar la aplicacion.
 
 ## Notas del Workspace
 
