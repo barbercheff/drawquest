@@ -23,6 +23,7 @@ Backend base implementado y con tests de integracion:
 - Aprobacion de dibujos restringida a `ROLE_ADMIN` o `ROLE_MODERATOR`.
 - Usuarios solo pueden consultar/modificar sus propios dibujos.
 - Usuarios solo pueden consultar su propio progreso.
+- Tests unitarios de services para autenticacion, usuarios, quests, dibujos y progreso.
 - Validacion con `@Valid` en payloads principales y validacion de IDs positivos en parametros de ruta.
 - Swagger disponible en `/swagger-ui.html`.
 - Ejemplos practicos de API en `API_EXAMPLES.md`.
@@ -99,18 +100,25 @@ Ejecutar suite:
 .\mvnw.cmd test
 ```
 
-La suite actual esta en `src/test/java/com/drawquest/DrawquestIntegrationTest.java` y cubre:
+La suite actual esta en:
+
+- `src/test/java/com/drawquest/DrawquestIntegrationTest.java`
+- `src/test/java/com/drawquest/ServicesUnitTest.java`
+
+Cubre:
 
 - Registro guarda password hasheada.
 - Login devuelve JWT.
+- Endpoints publicos/protegidos y tokens invalidos.
 - Usuarios normales no pueden listar usuarios, aprobar dibujos ni mutar quests.
 - Moderadores pueden crear/editar quests, pero no borrarlas.
 - Admin puede borrar quests.
 - Payloads invalidos devuelven `400 VALIDATION_ERROR`.
 - Usuarios solo acceden a sus propios dibujos y progreso.
 - Aprobar un dibujo completa progreso y suma XP una sola vez.
+- Services de autenticacion, usuarios, quests, dibujos y progreso con mocks.
 
-Ultima comprobacion local observada: 7 tests, 0 fallos, 0 errores.
+Ultima comprobacion local observada: 19 tests, 0 fallos, 0 errores.
 
 ## Rutas API
 

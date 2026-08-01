@@ -33,6 +33,7 @@ Backend base completado y verificado:
 - Usuarios solo pueden listar/ver/editar/borrar sus propios dibujos.
 - Aprobacion de dibujos restringida a `ROLE_ADMIN` o `ROLE_MODERATOR`.
 - Usuarios solo pueden listar/ver su propio progreso.
+- Tests unitarios de services para autenticacion, usuarios, quests, dibujos y progreso.
 - Validacion con `@Valid` en payloads principales.
 - Validacion de IDs positivos en parametros de ruta con `@Validated` y `@Positive`.
 - Validacion de `DrawingCreateDTO.questId` como positivo.
@@ -209,6 +210,15 @@ El repo Git activo esta dentro de `drawquest`. La carpeta padre tiene el antiguo
   - `Disena una ciudad bajo el agua`
   - `Inventa un heroe de fantasia`
   - `Dibuja una escena con luz dramatica`
+- Quitado `@JsonIgnore` de `User.id`; la API sigue exponiendo DTOs, no entidades.
+- Anadidos tests de seguridad para endpoints publicos/protegidos y token invalido.
+- Anadidos tests unitarios de services con Mockito:
+  - `AuthServiceImpl`
+  - `UserServiceImpl`
+  - `DrawingServiceImpl`
+  - `QuestServiceImpl`
+  - `ProgressServiceImpl`
+- Suite verificada con `.\mvnw.cmd test`: `BUILD SUCCESS`, 19 tests ejecutados.
 
 ## Lista activa
 

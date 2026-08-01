@@ -110,6 +110,42 @@ class DrawquestIntegrationTest {
     }
 
     @Test
+    void authEndpointsArePublicButProtectedEndpointsRequireValidToken() throws Exception {
+        mockMvc.perform(post("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "username": "public_user",
+                                  "password": "secret123",
+                                  "email": "public_user@example.com"
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username").value("public_user"));
+
+        mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "username": "public_user",
+                                  "password": "secret123"
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token").isNotEmpty());
+
+        mockMvc.perform(get("/quests"))
+                .andExpect(status().isUnauthorized());
+
+        mockMvc.perform(get("/users/me"))
+                .andExpect(status().isUnauthorized());
+
+        mockMvc.perform(get("/quests")
+                        .header("Authorization", "Bearer invalid-token"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
     void registerStoresHashedPasswordAndLoginReturnsJwt() throws Exception {
         mockMvc.perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
