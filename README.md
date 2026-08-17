@@ -1,5 +1,7 @@
 # DrawQuest
 
+[![Java CI](https://github.com/barbercheff/drawquest/actions/workflows/maven.yml/badge.svg?branch=main)](https://github.com/barbercheff/drawquest/actions/workflows/maven.yml)
+
 DrawQuest es una aplicacion de misiones de dibujo. Los usuarios se registran, inician sesion, completan quests subiendo dibujos y progresan con XP y niveles cuando sus dibujos son aprobados.
 
 El proyecto esta en desarrollo. El trabajo actual esta centrado en el backend Java/Spring Boot; cuando esta base quede cerrada, el siguiente objetivo sera construir el frontend y completar la aplicacion.
