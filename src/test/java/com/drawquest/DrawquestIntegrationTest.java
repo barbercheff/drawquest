@@ -346,6 +346,20 @@ class DrawquestIntegrationTest {
     }
 
     @Test
+    void multipartDrawingUploadRejectsMissingImagePart() throws Exception {
+        User user = createUser("missing_image_user", "secret123", "missing_image_user@example.com", ERole.ROLE_USER);
+        Quest quest = createQuest("Draw a lake", 35);
+        String token = tokenFor(user, "secret123");
+
+        mockMvc.perform(multipart("/drawings")
+                        .param("questId", quest.getId().toString())
+                        .header("Authorization", bearer(token)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorCode").value("VALIDATION_ERROR"))
+                .andExpect(jsonPath("$.details.image").value("Required request part is missing"));
+    }
+
+    @Test
     void updateDrawingImageWithMultipartReplacesImageUrl() throws Exception {
         User user = createUser("replace_image_user", "secret123", "replace_image_user@example.com", ERole.ROLE_USER);
         Quest quest = createQuest("Draw a moon", 45);
