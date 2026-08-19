@@ -492,6 +492,76 @@
           "response": []
         },
         {
+          "name": "Create Drawing With Image Upload",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  const json = pm.response.json();",
+                  "  pm.environment.set('drawingId', json.id);",
+                  "  pm.environment.set('drawingImageUrl', json.imageUrl);",
+                  "}",
+                  "",
+                  "pm.test('Drawing image URL returned', function () {",
+                  "  pm.expect(pm.environment.get('drawingImageUrl')).to.include('/uploads/drawings/');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "questId",
+                  "value": "{{questId}}",
+                  "type": "text"
+                },
+                {
+                  "key": "image",
+                  "type": "file",
+                  "src": "{{drawingImagePath}}"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/drawings",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "drawings"
+              ]
+            },
+            "description": "Uploads a real image file and stores the returned relative URL in drawings.image_url. Set drawingImagePath in the environment before sending."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Uploaded Drawing Image",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}{{drawingImageUrl}}",
+              "host": [
+                "{{baseUrl}}{{drawingImageUrl}}"
+              ]
+            },
+            "description": "Fetches the public image URL returned by Create Drawing With Image Upload."
+          },
+          "response": []
+        },
+        {
           "name": "List Drawings",
           "request": {
             "method": "GET",
@@ -550,6 +620,49 @@
                 "{{drawingId}}"
               ]
             }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Drawing Image Upload",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  pm.environment.set('drawingImageUrl', pm.response.json().imageUrl);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "image",
+                  "type": "file",
+                  "src": "{{drawingReplacementImagePath}}"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/drawings/{{drawingId}}/image",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "drawings",
+                "{{drawingId}}",
+                "image"
+              ]
+            },
+            "description": "Replaces the image of the current drawing. Set drawingReplacementImagePath in the environment before sending."
           },
           "response": []
         },
@@ -704,6 +817,39 @@
                 "drawings"
               ]
             }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Invalid Drawing File Type",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "questId",
+                  "value": "{{questId}}",
+                  "type": "text"
+                },
+                {
+                  "key": "image",
+                  "value": "not an image",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/drawings",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "drawings"
+              ]
+            },
+            "description": "Should return 400 VALIDATION_ERROR because the image part is not a file."
           },
           "response": []
         }
