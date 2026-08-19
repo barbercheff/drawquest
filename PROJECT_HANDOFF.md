@@ -1,6 +1,6 @@
 # DrawQuest - resumen para continuar trabajo
 
-Fecha de referencia: 2026-08-01.
+Fecha de referencia: 2026-08-19.
 
 ## Contexto general
 
@@ -31,9 +31,14 @@ Backend base completado y verificado:
   - `PUT /quests/*`: `ROLE_ADMIN` o `ROLE_MODERATOR`.
   - `DELETE /quests/*`: `ROLE_ADMIN`.
 - Usuarios solo pueden listar/ver/editar/borrar sus propios dibujos.
+- Subida real de imagenes de dibujos con `multipart/form-data`.
+- Imagenes guardadas como archivos locales y URLs relativas en `drawings.image_url`.
+- Imagenes servidas publicamente desde `/uploads/drawings/**`.
 - Aprobacion de dibujos restringida a `ROLE_ADMIN` o `ROLE_MODERATOR`.
 - Usuarios solo pueden listar/ver su propio progreso.
 - Tests unitarios de services para autenticacion, usuarios, quests, dibujos y progreso.
+- Tests de caducidad JWT unitarios y de integracion.
+- Tests de subida multipart de imagenes.
 - Validacion con `@Valid` en payloads principales.
 - Validacion de IDs positivos en parametros de ruta con `@Validated` y `@Positive`.
 - Validacion de `DrawingCreateDTO.questId` como positivo.
@@ -108,8 +113,10 @@ El repo Git activo esta dentro de `drawquest`. La carpeta padre tiene el antiguo
 - `GET /drawings/{id}`
 - `POST /drawings`
 - `PUT /drawings/{id}`
+- `PUT /drawings/{id}/image`
 - `PUT /drawings/{id}/approve`
 - `DELETE /drawings/{id}`
+- `GET /uploads/drawings/**`
 
 ### Progreso
 
@@ -220,11 +227,27 @@ El repo Git activo esta dentro de `drawquest`. La carpeta padre tiene el antiguo
   - `ProgressServiceImpl`
 - Suite verificada con `.\mvnw.cmd test`: `BUILD SUCCESS`, 19 tests ejecutados.
 
+### 2026-08-19
+
+- GitHub Actions configurado con workflow `Java CI`.
+- Badge de CI anadido al README.
+- Tests de caducidad JWT anadidos:
+  - `JwtUtilTest`
+  - `JwtExpirationIntegrationTest`
+- Subida real de imagenes implementada:
+  - `POST /drawings` acepta `multipart/form-data` con `questId` e `image`.
+  - `PUT /drawings/{id}/image` reemplaza la imagen de un dibujo propio.
+  - Archivos guardados en `DRAWQUEST_UPLOAD_DRAWINGS_DIR`.
+  - URLs relativas guardadas en `drawings.image_url`.
+  - Recursos servidos desde `/uploads/drawings/**`.
+  - Tipos permitidos: JPEG, PNG, WEBP y GIF.
+- Suite verificada con `.\mvnw.cmd test`: `BUILD SUCCESS`, 25 tests ejecutados.
+
 ## Lista activa
 
-1. Decidir e implementar subida real de imagenes para dibujos.
-2. Configurar CORS cuando empiece el frontend.
-3. Construir el frontend para consumir el backend y completar la aplicacion.
+1. Configurar CORS cuando empiece el frontend.
+2. Construir el frontend para consumir el backend y completar la aplicacion.
+3. Integrar SonarCloud y pulir documentacion de portfolio.
 
 Docker queda descartado por ahora; para pruebas locales se usa MySQL instalado en el ordenador.
 
@@ -253,6 +276,7 @@ DRAWQUEST_DB_PASSWORD=your_password
 DRAWQUEST_JWT_SECRET=base64_secret_with_at_least_256_bits
 DRAWQUEST_JWT_EXPIRATION_MS=3600000
 DRAWQUEST_LOG_LEVEL=INFO
+DRAWQUEST_UPLOAD_DRAWINGS_DIR=uploads/drawings
 ```
 
 Swagger:
@@ -273,5 +297,5 @@ http://localhost:8080/actuator/info
 Pegar esto:
 
 ```text
-Estoy trabajando en el proyecto DrawQuest. Lee el archivo PROJECT_HANDOFF.md en la raiz del repo drawquest y continua desde ahi. La base backend ya esta completada. La lista activa empieza por implementar subida real de imagenes, luego CORS y frontend.
+Estoy trabajando en el proyecto DrawQuest. Lee el archivo PROJECT_HANDOFF.md en la raiz del repo drawquest y continua desde ahi. La base backend ya esta completada, incluyendo subida real de imagenes. La lista activa empieza por configurar CORS cuando arranque el frontend y luego construir el frontend.
 ```

@@ -6,7 +6,7 @@ DrawQuest es una aplicacion de misiones de dibujo. Los usuarios se registran, in
 
 El proyecto esta en desarrollo. El trabajo actual esta centrado en el backend Java/Spring Boot; cuando esta base quede cerrada, el siguiente objetivo sera construir el frontend y completar la aplicacion.
 
-Estado de referencia: 2026-08-01.
+Estado de referencia: 2026-08-19.
 
 ## Estado Actual
 
@@ -24,6 +24,8 @@ Backend base implementado y con tests de integracion:
   - `DELETE /quests/{id}`: `ROLE_ADMIN`.
 - Aprobacion de dibujos restringida a `ROLE_ADMIN` o `ROLE_MODERATOR`.
 - Usuarios solo pueden consultar/modificar sus propios dibujos.
+- Subida real de imagenes de dibujos con `multipart/form-data`.
+- Imagenes guardadas como archivos locales y URLs relativas en base de datos.
 - Usuarios solo pueden consultar su propio progreso.
 - Tests unitarios de services para autenticacion, usuarios, quests, dibujos y progreso.
 - Validacion con `@Valid` en payloads principales y validacion de IDs positivos en parametros de ruta.
@@ -68,6 +70,7 @@ DRAWQUEST_DB_USERNAME=drawquest_admin
 DRAWQUEST_DB_PASSWORD=your_password
 DRAWQUEST_JWT_SECRET=base64_secret_with_at_least_256_bits
 DRAWQUEST_JWT_EXPIRATION_MS=3600000
+DRAWQUEST_UPLOAD_DRAWINGS_DIR=uploads/drawings
 ```
 
 `DRAWQUEST_JWT_SECRET` debe estar en Base64 y tener al menos 256 bits para HS256.
@@ -105,6 +108,8 @@ Ejecutar suite:
 La suite actual esta en:
 
 - `src/test/java/com/drawquest/DrawquestIntegrationTest.java`
+- `src/test/java/com/drawquest/JwtExpirationIntegrationTest.java`
+- `src/test/java/com/drawquest/JwtUtilTest.java`
 - `src/test/java/com/drawquest/ServicesUnitTest.java`
 
 Cubre:
@@ -116,11 +121,14 @@ Cubre:
 - Moderadores pueden crear/editar quests, pero no borrarlas.
 - Admin puede borrar quests.
 - Payloads invalidos devuelven `400 VALIDATION_ERROR`.
+- Subida multipart de imagenes guarda archivo y devuelve URL publica.
+- Tipos de archivo invalidos devuelven `400 VALIDATION_ERROR`.
 - Usuarios solo acceden a sus propios dibujos y progreso.
+- Tokens JWT caducados son rechazados.
 - Aprobar un dibujo completa progreso y suma XP una sola vez.
 - Services de autenticacion, usuarios, quests, dibujos y progreso con mocks.
 
-Ultima comprobacion local observada: 19 tests, 0 fallos, 0 errores.
+Ultima comprobacion local observada: 25 tests, 0 fallos, 0 errores.
 
 ## Rutas API
 
@@ -140,10 +148,13 @@ Ultima comprobacion local observada: 19 tests, 0 fallos, 0 errores.
 | DELETE | `/quests/{id}`          | `ROLE_ADMIN`                  | Borra quest |
 | GET    | `/drawings`             | Autenticado, propios          | Lista dibujos propios |
 | GET    | `/drawings/{id}`        | Autenticado, propio           | Devuelve dibujo propio |
-| POST   | `/drawings`             | Autenticado                   | Crea dibujo para una quest |
+| POST   | `/drawings` JSON        | Autenticado                   | Crea dibujo con URL existente |
+| POST   | `/drawings` multipart   | Autenticado                   | Sube imagen y crea dibujo |
 | PUT    | `/drawings/{id}`        | Autenticado, propio           | Actualiza dibujo propio |
+| PUT    | `/drawings/{id}/image`  | Autenticado, propio           | Reemplaza imagen del dibujo |
 | PUT    | `/drawings/{id}/approve`| `ROLE_ADMIN`/`ROLE_MODERATOR` | Aprueba dibujo y otorga XP |
 | DELETE | `/drawings/{id}`        | Autenticado, propio           | Borra dibujo propio |
+| GET    | `/uploads/drawings/**`  | Publico                       | Sirve imagenes subidas |
 | GET    | `/progress`             | Autenticado, propio           | Lista progreso propio |
 | GET    | `/progress/{id}`        | Autenticado, propio           | Devuelve progreso propio |
 
@@ -180,6 +191,24 @@ http://localhost:8080/actuator/info
 
 Solo estan expuestos `health` e `info`. Los detalles de health no se muestran publicamente.
 
+## Uploads
+
+Las imagenes de dibujos se suben con `multipart/form-data` y se guardan como archivos locales. La base de datos conserva solo la URL relativa en `drawings.image_url`.
+
+Configuracion:
+
+```properties
+DRAWQUEST_UPLOAD_DRAWINGS_DIR=uploads/drawings
+```
+
+La API sirve esos archivos desde:
+
+```text
+http://localhost:8080/uploads/drawings/<filename>
+```
+
+Tipos permitidos: JPEG, PNG, WEBP y GIF. El limite actual se controla con `spring.servlet.multipart.max-file-size=5MB`.
+
 ## Estructura
 
 ```text
@@ -214,9 +243,9 @@ postman/DrawQuest.local.postman_environment.json
 
 La base de backend indicada en el handoff ya esta completada. La lista activa es:
 
-1. Decidir e implementar subida real de imagenes para dibujos.
-2. Configurar CORS cuando empiece el frontend.
-3. Construir el frontend para consumir el backend y completar la aplicacion.
+1. Configurar CORS cuando empiece el frontend.
+2. Construir el frontend para consumir el backend y completar la aplicacion.
+3. Integrar SonarCloud y pulir documentacion de portfolio.
 
 ## Notas del Workspace
 

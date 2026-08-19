@@ -2,6 +2,7 @@ package com.drawquest.handlers;
 
 import com.drawquest.dtos.ErrorResponseDTO;
 import com.drawquest.exceptions.DuplicateResourceException;
+import com.drawquest.exceptions.InvalidFileException;
 import com.drawquest.exceptions.ResourceNotFoundException;
 import com.drawquest.exceptions.UnauthorizedException;
 import jakarta.validation.ConstraintViolationException;
@@ -59,6 +60,12 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.badRequest()
                 .body(new ErrorResponseDTO("VALIDATION_ERROR", "Some parameters are invalid", errors));
+    }
+
+    @ExceptionHandler(InvalidFileException.class)
+    public ResponseEntity<ErrorResponseDTO> handleInvalidFile(InvalidFileException ex) {
+        return ResponseEntity.badRequest()
+                .body(new ErrorResponseDTO("VALIDATION_ERROR", ex.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)

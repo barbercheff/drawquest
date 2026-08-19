@@ -129,7 +129,23 @@ Invoke-RestMethod `
 
 ## Drawings
 
-Creating a drawing requires a valid quest ID and a valid image URL.
+Creating a drawing with a real uploaded image requires `multipart/form-data` with `questId` and `image`.
+
+```powershell
+curl.exe `
+  -X POST "$baseUrl/drawings" `
+  -H "Authorization: Bearer $token" `
+  -F "questId=1" `
+  -F "image=@C:\path\to\drawing.png"
+```
+
+Uploaded drawing images are stored locally and the API response returns a public relative URL such as:
+
+```text
+/uploads/drawings/4d7b4e5a-2c8f-44e4-a8f7-30b03a4ad3f8.png
+```
+
+Creating a drawing with an existing external image URL is still supported.
 
 ```powershell
 $drawingBody = @{
@@ -174,6 +190,15 @@ Invoke-RestMethod `
   -Headers $headers `
   -ContentType "application/json" `
   -Body $drawingUpdateBody
+```
+
+To replace the uploaded image file for an existing drawing:
+
+```powershell
+curl.exe `
+  -X PUT "$baseUrl/drawings/$drawingId/image" `
+  -H "Authorization: Bearer $token" `
+  -F "image=@C:\path\to\drawing-v2.webp"
 ```
 
 Approving a drawing requires `ROLE_ADMIN` or `ROLE_MODERATOR`. Approval marks the quest progress as completed and awards XP only once for that user and quest.

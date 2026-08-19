@@ -3,6 +3,7 @@ package com.drawquest.controllers;
 import com.drawquest.dtos.DrawingCreateDTO;
 import com.drawquest.dtos.DrawingResponseDTO;
 import com.drawquest.dtos.DrawingUpdateDTO;
+import com.drawquest.services.DrawingImageStorageService;
 import com.drawquest.services.DrawingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -13,6 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,7 +26,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -37,8 +42,11 @@ public class DrawingController {
 
     private final DrawingService drawingService;
 
-    public DrawingController(DrawingService drawingService) {
+    private final DrawingImageStorageService drawingImageStorageService;
+
+    public DrawingController(DrawingService drawingService, DrawingImageStorageService drawingImageStorageService) {
         this.drawingService = drawingService;
+        this.drawingImageStorageService = drawingImageStorageService;
     }
 
     @Operation(
@@ -75,7 +83,7 @@ public class DrawingController {
                     @ApiResponse(responseCode = "400", description = "Invalid input data")
             }
     )
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DrawingResponseDTO> createDrawing(
             @Valid @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Drawing creation data",
@@ -83,6 +91,26 @@ public class DrawingController {
                     content = @Content(schema = @Schema(implementation = DrawingCreateDTO.class)))
             @RequestBody DrawingCreateDTO drawingCreateDTO,
             @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(drawingService.createDrawing(drawingCreateDTO, userDetails.getUsername()));
+    }
+
+    @Operation(
+            summary = "Create drawing with image upload",
+            description = "Allows the authenticated user to submit an image file for a quest",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Drawing created successfully"),
+                    @ApiResponse(responseCode = "400", description = "Invalid input data")
+            }
+    )
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<DrawingResponseDTO> createDrawingWithImage(
+            @RequestParam @Positive(message = "Quest ID must be positive") Long questId,
+            @RequestPart("image") MultipartFile image,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        String imageUrl = drawingImageStorageService.store(image);
+        DrawingCreateDTO drawingCreateDTO = new DrawingCreateDTO(questId, imageUrl);
+
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(drawingService.createDrawing(drawingCreateDTO, userDetails.getUsername()));
     }
@@ -105,6 +133,26 @@ public class DrawingController {
                     content = @Content(schema = @Schema(implementation = DrawingUpdateDTO.class)))
             @RequestBody DrawingUpdateDTO drawingUpdateDTO,
             @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(drawingService.updateDrawing(id, drawingUpdateDTO, userDetails.getUsername()));
+    }
+
+    @Operation(
+            summary = "Update drawing image",
+            description = "Replaces the image file for a specific drawing submission",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Drawing updated successfully", content = @Content(schema = @Schema(implementation = DrawingResponseDTO.class))),
+                    @ApiResponse(responseCode = "400", description = "Invalid input data", content = @Content),
+                    @ApiResponse(responseCode = "404", description = "Drawing not found", content = @Content)
+            }
+    )
+    @PutMapping(path = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<DrawingResponseDTO> updateDrawingImage(
+            @PathVariable @Positive(message = "Drawing ID must be positive") Long id,
+            @RequestPart("image") MultipartFile image,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        String imageUrl = drawingImageStorageService.store(image);
+        DrawingUpdateDTO drawingUpdateDTO = new DrawingUpdateDTO(imageUrl);
+
         return ResponseEntity.ok(drawingService.updateDrawing(id, drawingUpdateDTO, userDetails.getUsername()));
     }
 

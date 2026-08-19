@@ -21,12 +21,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.mock.web.MockMultipartFile;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Comparator;
 import java.util.HashSet;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -40,7 +45,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "spring.jpa.database-platform=org.hibernate.dialect.H2Dialect",
         "spring.jpa.hibernate.ddl-auto=create-drop",
         "spring.sql.init.mode=never",
-        "spring.flyway.enabled=false"
+        "spring.flyway.enabled=false",
+        "drawquest.upload.drawings-dir=target/test-uploads/drawings",
+        "drawquest.upload.drawings-public-path=/uploads/drawings"
 })
 @AutoConfigureMockMvc
 class DrawquestIntegrationTest {
@@ -70,12 +77,13 @@ class DrawquestIntegrationTest {
     private ProgressRepository progressRepository;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
         drawingRepository.deleteAll();
         progressRepository.deleteAll();
         questRepository.deleteAll();
         userRepository.deleteAll();
         roleRepository.deleteAll();
+        deleteDirectory(Path.of("target/test-uploads/drawings"));
 
         roleRepository.save(new Role(ERole.ROLE_USER));
         roleRepository.save(new Role(ERole.ROLE_MODERATOR));
@@ -294,6 +302,74 @@ class DrawquestIntegrationTest {
     }
 
     @Test
+    void createDrawingWithMultipartImageStoresFileAndExposesPublicUrl() throws Exception {
+        User user = createUser("upload_user", "secret123", "upload_user@example.com", ERole.ROLE_USER);
+        Quest quest = createQuest("Draw a cloud", 35);
+        String token = tokenFor(user, "secret123");
+        byte[] imageBytes = new byte[] { 1, 2, 3, 4 };
+        MockMultipartFile image = new MockMultipartFile("image", "cloud.png", "image/png", imageBytes);
+
+        String response = mockMvc.perform(multipart("/drawings")
+                        .file(image)
+                        .param("questId", quest.getId().toString())
+                        .header("Authorization", bearer(token)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.imageUrl").value(org.hamcrest.Matchers.startsWith("/uploads/drawings/")))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        String imageUrl = objectMapper.readTree(response).get("imageUrl").asText();
+        String filename = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+        Path storedFile = Path.of("target/test-uploads/drawings").resolve(filename);
+
+        assertThat(storedFile).exists();
+        assertThat(Files.readAllBytes(storedFile)).containsExactly(imageBytes);
+
+        mockMvc.perform(get(imageUrl))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void multipartDrawingUploadRejectsInvalidFileType() throws Exception {
+        User user = createUser("invalid_upload_user", "secret123", "invalid_upload_user@example.com", ERole.ROLE_USER);
+        Quest quest = createQuest("Draw a river", 35);
+        String token = tokenFor(user, "secret123");
+        MockMultipartFile image = new MockMultipartFile("image", "notes.txt", "text/plain", "not an image".getBytes());
+
+        mockMvc.perform(multipart("/drawings")
+                        .file(image)
+                        .param("questId", quest.getId().toString())
+                        .header("Authorization", bearer(token)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorCode").value("VALIDATION_ERROR"));
+    }
+
+    @Test
+    void updateDrawingImageWithMultipartReplacesImageUrl() throws Exception {
+        User user = createUser("replace_image_user", "secret123", "replace_image_user@example.com", ERole.ROLE_USER);
+        Quest quest = createQuest("Draw a moon", 45);
+        Drawing drawing = createDrawing(user, quest, "https://example.com/old-moon.png");
+        String token = tokenFor(user, "secret123");
+        MockMultipartFile image = new MockMultipartFile("image", "moon.webp", "image/webp", new byte[] { 5, 6, 7 });
+
+        mockMvc.perform(multipart("/drawings/{id}/image", drawing.getId())
+                        .file(image)
+                        .header("Authorization", bearer(token))
+                        .with(request -> {
+                            request.setMethod("PUT");
+                            return request;
+                        }))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.imageUrl").value(org.hamcrest.Matchers.startsWith("/uploads/drawings/")))
+                .andExpect(jsonPath("$.imageUrl").value(org.hamcrest.Matchers.endsWith(".webp")));
+
+        Drawing updatedDrawing = drawingRepository.findById(drawing.getId()).orElseThrow();
+        assertThat(updatedDrawing.getImageUrl()).startsWith("/uploads/drawings/");
+        assertThat(updatedDrawing.getImageUrl()).endsWith(".webp");
+    }
+
+    @Test
     void nonPositivePathIdsReturnBadRequest() throws Exception {
         User admin = createUser("param_admin", "secret123", "param_admin@example.com", ERole.ROLE_ADMIN);
         User user = createUser("param_user", "secret123", "param_user@example.com", ERole.ROLE_USER);
@@ -475,5 +551,22 @@ class DrawquestIntegrationTest {
                   "xpReward": %d
                 }
                 """.formatted(title, xpReward);
+    }
+
+    private void deleteDirectory(Path path) throws Exception {
+        if (!Files.exists(path)) {
+            return;
+        }
+
+        try (var paths = Files.walk(path)) {
+            paths.sorted(Comparator.reverseOrder())
+                    .forEach(file -> {
+                        try {
+                            Files.delete(file);
+                        } catch (Exception ex) {
+                            throw new IllegalStateException("Could not clean test upload directory", ex);
+                        }
+                    });
+        }
     }
 }
