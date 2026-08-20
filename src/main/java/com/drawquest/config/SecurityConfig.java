@@ -110,7 +110,7 @@ public class SecurityConfig {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource(
-            @Value("${drawquest.cors.allowed-origins:http://localhost:5173}") String allowedOrigins
+            @Value("${drawquest.cors.allowed-origins:http://localhost:4200,http://localhost:5173}") String allowedOrigins
     ) {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(splitCommaSeparatedValues(allowedOrigins));

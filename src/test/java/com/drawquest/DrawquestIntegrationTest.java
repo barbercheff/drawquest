@@ -48,7 +48,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "spring.jpa.hibernate.ddl-auto=create-drop",
         "spring.sql.init.mode=never",
         "spring.flyway.enabled=false",
-        "drawquest.cors.allowed-origins=http://localhost:5173",
+        "drawquest.cors.allowed-origins=http://localhost:4200,http://localhost:5173",
         "drawquest.upload.drawings-dir=target/test-uploads/drawings",
         "drawquest.upload.drawings-public-path=/uploads/drawings"
 })
@@ -123,11 +123,11 @@ class DrawquestIntegrationTest {
     @Test
     void corsPreflightAllowsConfiguredFrontendOrigin() throws Exception {
         mockMvc.perform(options("/drawings")
-                        .header("Origin", "http://localhost:5173")
+                        .header("Origin", "http://localhost:4200")
                         .header("Access-Control-Request-Method", "POST")
                         .header("Access-Control-Request-Headers", "authorization,content-type"))
                 .andExpect(status().isOk())
-                .andExpect(header().string("Access-Control-Allow-Origin", "http://localhost:5173"))
+                .andExpect(header().string("Access-Control-Allow-Origin", "http://localhost:4200"))
                 .andExpect(header().string("Access-Control-Allow-Methods", org.hamcrest.Matchers.containsString("POST")))
                 .andExpect(header().string("Access-Control-Allow-Headers", org.hamcrest.Matchers.containsString("authorization")));
     }
@@ -135,7 +135,7 @@ class DrawquestIntegrationTest {
     @Test
     void corsPreflightRejectsUnconfiguredOrigin() throws Exception {
         mockMvc.perform(options("/drawings")
-                        .header("Origin", "http://localhost:3000")
+                        .header("Origin", "http://localhost:3001")
                         .header("Access-Control-Request-Method", "POST"))
                 .andExpect(status().isForbidden())
                 .andExpect(header().doesNotExist("Access-Control-Allow-Origin"));

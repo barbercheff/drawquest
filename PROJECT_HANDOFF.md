@@ -249,7 +249,7 @@ El repo Git activo esta dentro de `drawquest`. La carpeta padre tiene el antiguo
 
 - CORS activado en `SecurityConfig`.
 - Origenes permitidos configurables con `DRAWQUEST_CORS_ALLOWED_ORIGINS`.
-- Valor por defecto para desarrollo: `http://localhost:5173`.
+- Valor por defecto para desarrollo: `http://localhost:4200,http://localhost:5173`.
 - Preflight `OPTIONS` cubierto por tests:
   - origen configurado permitido.
   - origen no configurado rechazado.
@@ -287,7 +287,7 @@ DRAWQUEST_DB_PASSWORD=your_password
 DRAWQUEST_JWT_SECRET=base64_secret_with_at_least_256_bits
 DRAWQUEST_JWT_EXPIRATION_MS=3600000
 DRAWQUEST_LOG_LEVEL=INFO
-DRAWQUEST_CORS_ALLOWED_ORIGINS=http://localhost:5173
+DRAWQUEST_CORS_ALLOWED_ORIGINS=http://localhost:4200,http://localhost:5173
 DRAWQUEST_UPLOAD_DRAWINGS_DIR=uploads/drawings
 ```
 

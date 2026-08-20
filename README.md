@@ -70,7 +70,7 @@ DRAWQUEST_DB_USERNAME=drawquest_admin
 DRAWQUEST_DB_PASSWORD=your_password
 DRAWQUEST_JWT_SECRET=base64_secret_with_at_least_256_bits
 DRAWQUEST_JWT_EXPIRATION_MS=3600000
-DRAWQUEST_CORS_ALLOWED_ORIGINS=http://localhost:5173
+DRAWQUEST_CORS_ALLOWED_ORIGINS=http://localhost:4200,http://localhost:5173
 DRAWQUEST_UPLOAD_DRAWINGS_DIR=uploads/drawings
 ```
 
@@ -184,16 +184,16 @@ DRAWQUEST_LOG_LEVEL=INFO
 
 ## CORS
 
-CORS esta configurado para permitir el frontend local:
+CORS esta configurado para permitir frontends locales de desarrollo:
 
 ```properties
-DRAWQUEST_CORS_ALLOWED_ORIGINS=http://localhost:5173
+DRAWQUEST_CORS_ALLOWED_ORIGINS=http://localhost:4200,http://localhost:5173
 ```
 
 Se pueden indicar varios origenes separados por coma:
 
 ```properties
-DRAWQUEST_CORS_ALLOWED_ORIGINS=http://localhost:5173,http://localhost:3000
+DRAWQUEST_CORS_ALLOWED_ORIGINS=http://localhost:4200,http://localhost:5173,http://localhost:3000
 ```
 
 ## Actuator
