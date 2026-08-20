@@ -1,6 +1,6 @@
 # DrawQuest - resumen para continuar trabajo
 
-Fecha de referencia: 2026-08-19.
+Fecha de referencia: 2026-08-20.
 
 ## Contexto general
 
@@ -39,12 +39,14 @@ Backend base completado y verificado:
 - Tests unitarios de services para autenticacion, usuarios, quests, dibujos y progreso.
 - Tests de caducidad JWT unitarios y de integracion.
 - Tests de subida multipart de imagenes.
+- Tests de CORS para origen permitido y origen rechazado.
 - Validacion con `@Valid` en payloads principales.
 - Validacion de IDs positivos en parametros de ruta con `@Validated` y `@Positive`.
 - Validacion de `DrawingCreateDTO.questId` como positivo.
 - Handler de errores de validacion devuelve `400 VALIDATION_ERROR`.
 - Swagger disponible en `/swagger-ui.html`.
 - Actuator disponible en `/actuator/health` y `/actuator/info`.
+- CORS configurado para frontend local mediante `DRAWQUEST_CORS_ALLOWED_ORIGINS`.
 - Logging basico de eventos de negocio con SLF4J/Logback.
 - Coleccion Postman local en `postman/`.
 - Ejemplos practicos de API en `API_EXAMPLES.md`.
@@ -243,11 +245,20 @@ El repo Git activo esta dentro de `drawquest`. La carpeta padre tiene el antiguo
   - Tipos permitidos: JPEG, PNG, WEBP y GIF.
 - Suite verificada con `.\mvnw.cmd test`: `BUILD SUCCESS`, 25 tests ejecutados.
 
+### 2026-08-20
+
+- CORS activado en `SecurityConfig`.
+- Origenes permitidos configurables con `DRAWQUEST_CORS_ALLOWED_ORIGINS`.
+- Valor por defecto para desarrollo: `http://localhost:5173`.
+- Preflight `OPTIONS` cubierto por tests:
+  - origen configurado permitido.
+  - origen no configurado rechazado.
+- Suite verificada con `.\mvnw.cmd test`: `BUILD SUCCESS`, 28 tests ejecutados.
+
 ## Lista activa
 
-1. Configurar CORS cuando empiece el frontend.
-2. Construir el frontend para consumir el backend y completar la aplicacion.
-3. Integrar SonarCloud y pulir documentacion de portfolio.
+1. Construir el frontend para consumir el backend y completar la aplicacion.
+2. Integrar SonarCloud y pulir documentacion de portfolio.
 
 Docker queda descartado por ahora; para pruebas locales se usa MySQL instalado en el ordenador.
 
@@ -276,6 +287,7 @@ DRAWQUEST_DB_PASSWORD=your_password
 DRAWQUEST_JWT_SECRET=base64_secret_with_at_least_256_bits
 DRAWQUEST_JWT_EXPIRATION_MS=3600000
 DRAWQUEST_LOG_LEVEL=INFO
+DRAWQUEST_CORS_ALLOWED_ORIGINS=http://localhost:5173
 DRAWQUEST_UPLOAD_DRAWINGS_DIR=uploads/drawings
 ```
 
@@ -297,5 +309,5 @@ http://localhost:8080/actuator/info
 Pegar esto:
 
 ```text
-Estoy trabajando en el proyecto DrawQuest. Lee el archivo PROJECT_HANDOFF.md en la raiz del repo drawquest y continua desde ahi. La base backend ya esta completada, incluyendo subida real de imagenes. La lista activa empieza por configurar CORS cuando arranque el frontend y luego construir el frontend.
+Estoy trabajando en el proyecto DrawQuest. Lee el archivo PROJECT_HANDOFF.md en la raiz del repo drawquest y continua desde ahi. La base backend ya esta completada, incluyendo subida real de imagenes y CORS para frontend local. La lista activa empieza por construir el frontend.
 ```

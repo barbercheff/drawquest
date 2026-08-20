@@ -70,6 +70,7 @@ DRAWQUEST_DB_USERNAME=drawquest_admin
 DRAWQUEST_DB_PASSWORD=your_password
 DRAWQUEST_JWT_SECRET=base64_secret_with_at_least_256_bits
 DRAWQUEST_JWT_EXPIRATION_MS=3600000
+DRAWQUEST_CORS_ALLOWED_ORIGINS=http://localhost:5173
 DRAWQUEST_UPLOAD_DRAWINGS_DIR=uploads/drawings
 ```
 
@@ -123,12 +124,13 @@ Cubre:
 - Payloads invalidos devuelven `400 VALIDATION_ERROR`.
 - Subida multipart de imagenes guarda archivo y devuelve URL publica.
 - Tipos de archivo invalidos devuelven `400 VALIDATION_ERROR`.
+- CORS permite el origen frontend configurado y rechaza origenes no configurados.
 - Usuarios solo acceden a sus propios dibujos y progreso.
 - Tokens JWT caducados son rechazados.
 - Aprobar un dibujo completa progreso y suma XP una sola vez.
 - Services de autenticacion, usuarios, quests, dibujos y progreso con mocks.
 
-Ultima comprobacion local observada: 25 tests, 0 fallos, 0 errores.
+Ultima comprobacion local observada: 28 tests, 0 fallos, 0 errores.
 
 ## Rutas API
 
@@ -178,6 +180,20 @@ Nivel configurable:
 
 ```properties
 DRAWQUEST_LOG_LEVEL=INFO
+```
+
+## CORS
+
+CORS esta configurado para permitir el frontend local:
+
+```properties
+DRAWQUEST_CORS_ALLOWED_ORIGINS=http://localhost:5173
+```
+
+Se pueden indicar varios origenes separados por coma:
+
+```properties
+DRAWQUEST_CORS_ALLOWED_ORIGINS=http://localhost:5173,http://localhost:3000
 ```
 
 ## Actuator
@@ -243,9 +259,8 @@ postman/DrawQuest.local.postman_environment.json
 
 La base de backend indicada en el handoff ya esta completada. La lista activa es:
 
-1. Configurar CORS cuando empiece el frontend.
-2. Construir el frontend para consumir el backend y completar la aplicacion.
-3. Integrar SonarCloud y pulir documentacion de portfolio.
+1. Construir el frontend para consumir el backend y completar la aplicacion.
+2. Integrar SonarCloud y pulir documentacion de portfolio.
 
 ## Notas del Workspace
 
